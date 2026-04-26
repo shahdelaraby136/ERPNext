@@ -1,0 +1,16 @@
+{
+ "content": null,
+ "creation": "2026-04-14 00:00:00",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-04-14 00:00:00",
+ "module": "Custom ERP",
+ "name": "accounting-dashboard",
+ "owner": "Administrator",
+ "page_name": "accounting-dashboard",
+ "roles": [],
+ "standard": "Yes",
+ "system_page": 0,
+ "title": "Accounting Dashboard"
+}

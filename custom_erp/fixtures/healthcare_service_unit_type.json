@@ -1,0 +1,42 @@
+[
+ {
+  "allow_appointments": 1,
+  "change_in_item": 0,
+  "description": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Healthcare Service Unit Type",
+  "inpatient_occupancy": 0,
+  "is_billable": 0,
+  "item": null,
+  "item_code": null,
+  "item_group": null,
+  "modified": "2026-04-05 14:26:35.221841",
+  "name": "Examination Room",
+  "no_of_hours": 0,
+  "overlap_appointments": 0,
+  "rate": 0.0,
+  "service_unit_type": "Examination Room",
+  "uom": null
+ },
+ {
+  "allow_appointments": 1,
+  "change_in_item": 0,
+  "description": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Healthcare Service Unit Type",
+  "inpatient_occupancy": 0,
+  "is_billable": 0,
+  "item": null,
+  "item_code": null,
+  "item_group": null,
+  "modified": "2026-04-05 14:27:08.800958",
+  "name": "Pharmacy",
+  "no_of_hours": 0,
+  "overlap_appointments": 0,
+  "rate": 0.0,
+  "service_unit_type": "Pharmacy",
+  "uom": null
+ }
+]

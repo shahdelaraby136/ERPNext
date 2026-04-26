@@ -1,0 +1,626 @@
+/* ==========================================================================
+   Custom ERP — Medical Login Screen
+   Professional split-screen. Blue primary #2563EB. White surfaces. 8px grid.
+   ========================================================================== */
+
+:root {
+  --login-primary:        #2563EB;
+  --login-primary-hover:  #1D4ED8;
+  --login-primary-light:  #DBEAFE;
+  --login-primary-50:     #EFF6FF;
+  --login-bg:             #F8FAFC;
+  --login-card:           #FFFFFF;
+  --login-border:         #E2E8F0;
+  --login-border-strong:  #CBD5E1;
+  --login-text:           #0F172A;
+  --login-text-secondary: #64748B;
+  --login-text-muted:     #94A3B8;
+
+  --login-shadow:         0 1px 3px 0 rgba(15, 23, 42, 0.05),
+                          0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --login-shadow-focus:   0 0 0 4px rgba(37, 99, 235, 0.18),
+                          inset 0 0 0 1px var(--login-primary);
+
+  /* 8px spacing scale */
+  --lsp-1: 8px;   --lsp-2: 16px;  --lsp-3: 24px;
+  --lsp-4: 32px;  --lsp-5: 40px;  --lsp-6: 48px;
+}
+
+/* ==========================================================================
+   Reset Frappe's website chrome on the login route only
+   ========================================================================== */
+body[data-path="login"] {
+  background: var(--login-bg) !important;
+  color: var(--login-text) !important;
+  font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+html:has(body[data-path="login"]) { height: 100vh; overflow: hidden; }
+
+body[data-path="login"] .navbar,
+body[data-path="login"] header,
+body[data-path="login"] footer,
+body[data-path="login"] .page-breadcrumbs,
+body[data-path="login"] .page-header-wrapper,
+body[data-path="login"] #navbar-search,
+body[data-path="login"] .web-footer,
+body[data-path="login"] .web-footer-wrapper {
+  display: none !important;
+}
+
+body[data-path="login"] #page-login,
+body[data-path="login"] .page-content-wrapper,
+body[data-path="login"] main.container,
+body[data-path="login"] .page_content {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* ==========================================================================
+   Layout: 2-column grid, fixed full-viewport
+   Left  60%  (hero image + headline)
+   Right 40%  (login form)
+   ========================================================================== */
+body[data-path="login"] #page-login {
+  height: 100vh;
+  max-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  background: var(--login-bg);
+  overflow: hidden;
+}
+
+body[data-path="login"] main.container,
+body[data-path="login"] .page_content { display: contents; }
+
+/* ==========================================================================
+   LEFT PANEL — eye image + medical blue overlay + headline
+   ========================================================================== */
+body[data-path="login"] #page-login::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1;
+  background-image: url("/assets/custom_erp/images/login-bg.png?v=3");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: relative;
+  height: 100vh;
+}
+
+/* ==========================================================================
+   RIGHT PANEL — login form, centered, max 440px wide
+   ========================================================================== */
+body[data-path="login"] section.for-login,
+body[data-path="login"] section.for-signup,
+body[data-path="login"] section.for-forgot,
+body[data-path="login"] section.for-email-login,
+body[data-path="login"] section.for-login-with-email-link {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  max-width: 440px;
+  padding: var(--lsp-4);
+  background: transparent;
+  position: relative;
+  z-index: 3;
+  max-height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+body[data-path="login"] section.for-login::-webkit-scrollbar,
+body[data-path="login"] section.for-signup::-webkit-scrollbar,
+body[data-path="login"] section.for-forgot::-webkit-scrollbar { width: 4px; }
+body[data-path="login"] section::-webkit-scrollbar-thumb {
+  background: var(--login-border-strong);
+  border-radius: 4px;
+}
+
+/* ---- Card head: logo + title + subtitle ---- */
+body[data-path="login"] .page-card-head {
+  text-align: center;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 0 var(--lsp-3) 0 !important;
+  margin: 0 0 var(--lsp-1) 0 !important;
+  position: relative;
+}
+/* Hide Frappe's default cube logo, replace with medical badge */
+body[data-path="login"] .page-card-head .app-logo {
+  display: none !important;
+}
+body[data-path="login"] .page-card-head::before {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto var(--lsp-2);
+  background-image: url("/assets/custom_erp/images/login-logo.png?v=2");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+}
+body[data-path="login"] .page-card-head h4 {
+  color: var(--login-text) !important;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  margin: 0 0 var(--lsp-1) 0;
+}
+body[data-path="login"] .page-card-head h4::after {
+  content: "Sign in to continue managing your clinic";
+  display: block;
+  margin-top: var(--lsp-1);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--login-text-secondary);
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+/* ---- Form body — no card frame, sits directly on bg ---- */
+body[data-path="login"] .login-content.page-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0;
+}
+body[data-path="login"] .page-card-body {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Form group spacing — 16px between fields */
+body[data-path="login"] .form-group {
+  margin-bottom: var(--lsp-2);
+}
+body[data-path="login"] .form-group:last-of-type { margin-bottom: 0; }
+
+/* ---- Field label (for sr-only, but in case it shows) ---- */
+body[data-path="login"] .form-label {
+  color: var(--login-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
+}
+body[data-path="login"] .form-label.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Inputs — modern, white, clear borders, blue focus
+   ========================================================================== */
+body[data-path="login"] .email-field,
+body[data-path="login"] .password-field {
+  position: relative;
+}
+body[data-path="login"] .email-field input,
+body[data-path="login"] .password-field input,
+body[data-path="login"] input.form-control,
+body[data-path="login"] input#login_email,
+body[data-path="login"] input#login_password,
+body[data-path="login"] input#forgot_email {
+  background: var(--login-card) !important;
+  border: 1px solid var(--login-border) !important;
+  color: var(--login-text) !important;
+  border-radius: 8px !important;
+  padding: 12px 16px 12px 44px !important;
+  font-size: 14px !important;
+  height: 44px !important;
+  width: 100% !important;
+  line-height: 1.5;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+  box-shadow: none !important;
+}
+body[data-path="login"] input.form-control::placeholder {
+  color: var(--login-text-muted) !important;
+}
+body[data-path="login"] input.form-control:hover {
+  border-color: var(--login-border-strong) !important;
+}
+body[data-path="login"] input.form-control:focus,
+body[data-path="login"] input#login_email:focus,
+body[data-path="login"] input#login_password:focus,
+body[data-path="login"] input#forgot_email:focus {
+  background: var(--login-card) !important;
+  border-color: var(--login-primary) !important;
+  border-width: 1px !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Field icons (left side of input) */
+body[data-path="login"] .field-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--login-text-muted);
+  pointer-events: none;
+  z-index: 2;
+}
+body[data-path="login"] .field-icon use,
+body[data-path="login"] .field-icon path {
+  stroke: var(--login-text-muted) !important;
+  fill: none !important;
+}
+body[data-path="login"] .email-field:focus-within .field-icon use,
+body[data-path="login"] .password-field:focus-within .field-icon use,
+body[data-path="login"] .email-field:focus-within .field-icon path,
+body[data-path="login"] .password-field:focus-within .field-icon path {
+  stroke: var(--login-primary) !important;
+}
+
+/* Show/hide password toggle — replaces "Show"/"Hide" text with eye icon */
+body[data-path="login"] .password-field {
+  position: relative !important;
+  display: block;
+  height: 44px;
+}
+body[data-path="login"] .password-field .toggle-password,
+body[data-path="login"] .toggle-password {
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  cursor: pointer;
+  user-select: none;
+  background: transparent !important;
+  border-radius: 6px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  transition: background 120ms ease;
+  z-index: 3;
+}
+body[data-path="login"] .toggle-password::before {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+  /* Eye-open: shown when password is HIDDEN (input[type=password]) — click to reveal */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'/><circle cx='12' cy='12' r='3'/></svg>");
+  transition: background-image 120ms ease;
+}
+/* Eye-off: shown when password is REVEALED (input[type=text]) — click to hide */
+body[data-path="login"] .password-field input[type="text"] ~ .toggle-password::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24'/><line x1='1' y1='1' x2='23' y2='23'/></svg>");
+}
+body[data-path="login"] .toggle-password:hover {
+  background: var(--login-primary-50);
+}
+body[data-path="login"] .toggle-password:hover::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'/><circle cx='12' cy='12' r='3'/></svg>");
+}
+body[data-path="login"] .password-field input[type="text"] ~ .toggle-password:hover::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231D4ED8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24'/><line x1='1' y1='1' x2='23' y2='23'/></svg>");
+}
+
+/* ---- Forgot password link ---- */
+body[data-path="login"] .forgot-password-message {
+  text-align: right;
+  margin: 0 0 var(--lsp-3) 0;
+  padding: 0;
+}
+body[data-path="login"] .forgot-password-message a {
+  color: var(--login-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+body[data-path="login"] .forgot-password-message a:hover {
+  color: var(--login-primary-hover);
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Buttons — strong, clickable, blue primary
+   ========================================================================== */
+body[data-path="login"] .page-card-actions {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+body[data-path="login"] .btn-login,
+body[data-path="login"] .btn-forgot,
+body[data-path="login"] .btn-signup,
+body[data-path="login"] button[type="submit"] {
+  background: var(--login-primary) !important;
+  border: 1px solid var(--login-primary) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  width: 100% !important;
+  height: 44px;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  transition: background-color 140ms ease, border-color 140ms ease, transform 80ms ease, box-shadow 140ms ease;
+  box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.25);
+  cursor: pointer;
+}
+body[data-path="login"] .btn-login:hover,
+body[data-path="login"] .btn-forgot:hover,
+body[data-path="login"] .btn-signup:hover,
+body[data-path="login"] button[type="submit"]:hover {
+  background: var(--login-primary-hover) !important;
+  border-color: var(--login-primary-hover) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.30);
+}
+body[data-path="login"] .btn-login:active,
+body[data-path="login"] .btn-forgot:active,
+body[data-path="login"] .btn-signup:active,
+body[data-path="login"] button[type="submit"]:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.20);
+}
+body[data-path="login"] .btn-login:focus-visible,
+body[data-path="login"] button[type="submit"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.30);
+}
+body[data-path="login"] .btn-login:disabled,
+body[data-path="login"] .btn-login.disabled {
+  background: var(--login-primary-light) !important;
+  border-color: var(--login-primary-light) !important;
+  color: var(--login-text-muted) !important;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   Divider with "OR" label — centered with thin lines on both sides
+   Targets Frappe's <p class="text-muted login-divider">or</p>
+   ========================================================================== */
+body[data-path="login"] .login-divider,
+body[data-path="login"] p.login-divider {
+  display: flex !important;
+  align-items: center;
+  text-align: center;
+  color: var(--login-text-muted) !important;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin: var(--lsp-3) 0 !important;
+  padding: 0;
+  width: 100%;
+}
+body[data-path="login"] .login-divider::before,
+body[data-path="login"] .login-divider::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--login-border);
+}
+body[data-path="login"] .login-divider::before { margin-right: 12px; }
+body[data-path="login"] .login-divider::after  { margin-left: 12px; }
+
+body[data-path="login"] section hr {
+  display: none;
+}
+
+/* ==========================================================================
+   Secondary actions: signup link, etc.
+   ========================================================================== */
+body[data-path="login"] .signup-link,
+body[data-path="login"] .login-link {
+  display: inline-block;
+  color: var(--login-primary);
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+}
+body[data-path="login"] .signup-link:hover,
+body[data-path="login"] .login-link:hover {
+  color: var(--login-primary-hover);
+  text-decoration: underline;
+}
+body[data-path="login"] section a:not(.btn) {
+  color: var(--login-primary);
+  text-decoration: none;
+}
+body[data-path="login"] section a:not(.btn):hover {
+  color: var(--login-primary-hover);
+}
+body[data-path="login"] .text-center,
+body[data-path="login"] .signup-message,
+body[data-path="login"] .sign-up-message,
+body[data-path="login"] .login-message {
+  color: var(--login-text-secondary) !important;
+  font-size: 14px;
+  margin-top: var(--lsp-2);
+  text-align: center;
+}
+
+/* Social-logins block (wraps OR + email link + social buttons) */
+body[data-path="login"] .social-logins {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Login with Email Link button — outlined blue with envelope icon */
+body[data-path="login"] .btn-login-with-email-link,
+body[data-path="login"] a.btn-login-with-email-link {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--login-card) !important;
+  border: 1px solid var(--login-primary) !important;
+  color: var(--login-primary) !important;
+  border-radius: 8px !important;
+  width: 100% !important;
+  height: 44px;
+  padding: 12px 16px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  margin: 0 !important;
+}
+body[data-path="login"] .btn-login-with-email-link::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='4' width='20' height='16' rx='2'/><path d='M22 7l-10 6L2 7'/></svg>");
+  transition: background-image 140ms ease;
+}
+body[data-path="login"] .btn-login-with-email-link:hover {
+  background: var(--login-primary) !important;
+  color: #FFFFFF !important;
+  border-color: var(--login-primary) !important;
+}
+body[data-path="login"] .btn-login-with-email-link:hover::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='4' width='20' height='16' rx='2'/><path d='M22 7l-10 6L2 7'/></svg>");
+}
+body[data-path="login"] .btn-login-with-email-link:active {
+  transform: translateY(1px);
+}
+body[data-path="login"] .login-button-wrapper { width: 100%; }
+
+/* Generic social login buttons (Google/GitHub/etc — kept neutral) */
+body[data-path="login"] .social-login-buttons .btn-default:not(.btn-login-with-email-link),
+body[data-path="login"] .social-login-buttons .btn-secondary:not(.btn-login-with-email-link) {
+  background: var(--login-card) !important;
+  border: 1px solid var(--login-border) !important;
+  color: var(--login-text) !important;
+  border-radius: 8px !important;
+  height: 44px;
+  margin-bottom: var(--lsp-1);
+  font-weight: 500 !important;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   Inline alerts (login errors, success, info)
+   ========================================================================== */
+body[data-path="login"] .indicator-pill,
+body[data-path="login"] .alert {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border: 1px solid rgba(239, 68, 68, 0.30) !important;
+  color: #B91C1C !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  margin-bottom: var(--lsp-2);
+  font-size: 14px;
+}
+body[data-path="login"] .alert-success {
+  background: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.30) !important;
+  color: #047857 !important;
+}
+body[data-path="login"] .alert-info {
+  background: var(--login-primary-50) !important;
+  border-color: var(--login-primary-light) !important;
+  color: var(--login-primary-hover) !important;
+}
+
+body[data-path="login"] noscript .text-center {
+  background: var(--login-card);
+  border: 1px solid var(--login-border);
+  border-radius: 12px;
+  padding: var(--lsp-3);
+  margin: var(--lsp-6);
+}
+
+/* ==========================================================================
+   Responsive — stack on small screens
+   ========================================================================== */
+@media (max-width: 900px) {
+  body[data-path="login"] #page-login {
+    grid-template-columns: 1fr;
+    grid-template-rows: 32vh 1fr;
+    height: 100vh;
+  }
+  body[data-path="login"] #page-login::before {
+    grid-row: 1;
+    grid-column: 1;
+    height: 32vh;
+    border-right: none;
+    border-bottom: 1px solid var(--login-border);
+  }
+  body[data-path="login"] #page-login::after {
+    margin: 0 var(--lsp-3) var(--lsp-2) var(--lsp-3);
+    font-size: 20px;
+    max-width: 80%;
+  }
+  body[data-path="login"] section.for-login,
+  body[data-path="login"] section.for-signup,
+  body[data-path="login"] section.for-forgot {
+    grid-row: 2;
+    grid-column: 1;
+    padding: var(--lsp-3) var(--lsp-2);
+    max-width: 100%;
+    max-height: 68vh;
+  }
+  body[data-path="login"] .login-content.page-card {
+    padding: var(--lsp-2) !important;
+  }
+}
+
+/* ==========================================================================
+   RTL support — Arabic / Hebrew
+   ========================================================================== */
+html[dir="rtl"] body[data-path="login"] .email-field input,
+html[dir="rtl"] body[data-path="login"] .password-field input,
+[dir="rtl"] body[data-path="login"] input.form-control {
+  padding: 12px 44px 12px 16px !important;
+  text-align: right;
+}
+html[dir="rtl"] body[data-path="login"] .field-icon,
+[dir="rtl"] body[data-path="login"] .field-icon {
+  left: auto;
+  right: 14px;
+}
+html[dir="rtl"] body[data-path="login"] .toggle-password,
+[dir="rtl"] body[data-path="login"] .toggle-password {
+  right: auto;
+  left: 12px;
+}
+html[dir="rtl"] body[data-path="login"] .forgot-password-message,
+[dir="rtl"] body[data-path="login"] .forgot-password-message {
+  text-align: left;
+}

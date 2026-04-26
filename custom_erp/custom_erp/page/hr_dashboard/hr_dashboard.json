@@ -1,0 +1,16 @@
+{
+ "content": null,
+ "creation": "2026-04-14 00:00:00",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-04-14 00:00:00",
+ "module": "Custom ERP",
+ "name": "hr-dashboard",
+ "owner": "Administrator",
+ "page_name": "hr-dashboard",
+ "roles": [],
+ "standard": "Yes",
+ "system_page": 0,
+ "title": "HR Dashboard"
+}

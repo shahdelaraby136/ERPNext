@@ -1,0 +1,124 @@
+[
+ {
+  "allow_video_conferencing": 0,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Practitioner Schedule",
+  "modified": "2026-04-05 16:01:22.432246",
+  "name": "Morning Shift",
+  "schedule_name": "Morning Shift",
+  "time_slots": [
+   {
+    "day": "Sunday",
+    "duration": 0.0,
+    "from_time": "9:00:00",
+    "maximum_appointments": 0,
+    "parent": "Morning Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "15:00:00"
+   },
+   {
+    "day": "Monday",
+    "duration": 0.0,
+    "from_time": "9:00:00",
+    "maximum_appointments": 0,
+    "parent": "Morning Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "15:00:00"
+   },
+   {
+    "day": "Tuesday",
+    "duration": 0.0,
+    "from_time": "9:00:00",
+    "maximum_appointments": 0,
+    "parent": "Morning Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "15:00:00"
+   },
+   {
+    "day": "Wednesday",
+    "duration": 0.0,
+    "from_time": "9:00:00",
+    "maximum_appointments": 0,
+    "parent": "Morning Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "15:00:00"
+   },
+   {
+    "day": "Thursday",
+    "duration": 0.0,
+    "from_time": "9:00:00",
+    "maximum_appointments": 0,
+    "parent": "Morning Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "15:00:00"
+   }
+  ]
+ },
+ {
+  "allow_video_conferencing": 0,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Practitioner Schedule",
+  "modified": "2026-04-05 16:01:22.480184",
+  "name": "Evening Shift",
+  "schedule_name": "Evening Shift",
+  "time_slots": [
+   {
+    "day": "Sunday",
+    "duration": 0.0,
+    "from_time": "15:00:00",
+    "maximum_appointments": 0,
+    "parent": "Evening Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "21:00:00"
+   },
+   {
+    "day": "Monday",
+    "duration": 0.0,
+    "from_time": "15:00:00",
+    "maximum_appointments": 0,
+    "parent": "Evening Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "21:00:00"
+   },
+   {
+    "day": "Tuesday",
+    "duration": 0.0,
+    "from_time": "15:00:00",
+    "maximum_appointments": 0,
+    "parent": "Evening Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "21:00:00"
+   },
+   {
+    "day": "Wednesday",
+    "duration": 0.0,
+    "from_time": "15:00:00",
+    "maximum_appointments": 0,
+    "parent": "Evening Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "21:00:00"
+   },
+   {
+    "day": "Thursday",
+    "duration": 0.0,
+    "from_time": "15:00:00",
+    "maximum_appointments": 0,
+    "parent": "Evening Shift",
+    "parentfield": "time_slots",
+    "parenttype": "Practitioner Schedule",
+    "to_time": "21:00:00"
+   }
+  ]
+ }
+]

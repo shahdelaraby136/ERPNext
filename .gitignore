@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.Python
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+MANIFEST
+.installed.cfg
+
+# Frappe / Bench
+*.log
+sites/
+node_modules/
+.frappe
+sentry-build-plugin
+.python-version
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.venv
+venv/
+env/
+
+# Claude local context (DO NOT COMMIT)
+.claude/
+
+# Backups
+*.bak
+*.sql
+*.sql.gz
+
+# Misc
+*.tar.gz
+*.tgz
