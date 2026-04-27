@@ -8,9 +8,9 @@
 [data-theme="light"],
 [data-theme="dark"] {
   /* Brand */
-  --primary:        #2563EB;
-  --primary-hover:  #1D4ED8;
-  --primary-light:  #DBEAFE;
+  --primary:        #d07213;
+  --primary-hover:  #d81d1d;
+  --primary-light:  #e9fedb;
   --primary-50:     #EFF6FF;
   --primary-soft:   rgba(37, 99, 235, 0.10);
 

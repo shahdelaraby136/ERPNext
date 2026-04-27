@@ -32,6 +32,8 @@ fixtures = [
     {"dt": "Print Format", "filters": [["module", "=", "Custom ERP"]]},
     {"dt": "Workspace", "filters": [["module", "=", "Custom ERP"]]},
     {"dt": "Property Setter", "filters": [["doc_type", "in", ["Patient Encounter"]]]},
+    {"dt": "Server Script", "filters": [["name", "in", ["selling_dashboard_data"]]]},
+    {"dt": "Custom Field", "filters": [["name", "in", ["Customer-customer_health_score"]]]},
 ]
 
 # Apps
@@ -54,11 +56,16 @@ fixtures = [
 # ------------------
 
 # include js, css files in header of desk.html
-app_include_css = "/assets/custom_erp/css/custom_theme.css?v=25"
-# app_include_js = "/assets/custom_erp/js/custom_erp.js"
+app_include_css = [
+    "/assets/custom_erp/css/custom_theme.css?v=26",
+    "/assets/custom_erp/css/selling_dashboard.css?v=3",
+]
+app_include_js = [
+    "/assets/custom_erp/js/selling_dashboard.js?v=3",
+]
 
 # include js, css files in header of web template
-web_include_css = "/assets/custom_erp/css/login.css?v=11"
+web_include_css = "/assets/custom_erp/css/login.css?v=12"
 # web_include_js = "/assets/custom_erp/js/custom_erp.js"
 
 # include custom scss in every website theme (without file extension ".scss")

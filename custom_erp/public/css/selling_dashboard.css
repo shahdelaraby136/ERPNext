@@ -1,0 +1,349 @@
+/* ============================================================
+   Custom Selling Dashboard — RED theme
+   Scoped under .ce-theme-red so it doesn't leak globally.
+   Pairs with selling_dashboard.js (mounted on /app/selling).
+   ============================================================ */
+
+.ce-theme-red {
+	--ce-red-50:  #FEF2F2;
+	--ce-red-100: #FEE2E2;
+	--ce-red-200: #FECACA;
+	--ce-red-300: #FCA5A5;
+	--ce-red-400: #F87171;
+	--ce-red-500: #EF4444;
+	--ce-red-600: #DC2626;
+	--ce-red-700: #B91C1C;
+	--ce-red-800: #991B1B;
+	--ce-red-900: #7F1D1D;
+	--ce-red-ink: #450A0A;
+
+	color: var(--ce-red-ink);
+}
+
+/* Root fills the workspace area */
+.ce-sell-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background:
+		radial-gradient(1200px 400px at 0% 0%, rgba(220,38,38,0.10) 0%, transparent 60%),
+		radial-gradient(900px 300px at 100% 0%, rgba(127,29,29,0.10) 0%, transparent 60%),
+		linear-gradient(180deg, #FFF7F7 0%, #FFFFFF 100%);
+	padding-bottom: 32px;
+}
+
+/* ---------------- HERO ---------------- */
+.ce-theme-red .ce-hero,
+.ce-theme-red .ce-hero-sell {
+	background:
+		radial-gradient(800px 260px at 80% 0%, rgba(255,255,255,0.18) 0%, transparent 60%),
+		linear-gradient(135deg, #DC2626 0%, #991B1B 55%, #7F1D1D 100%) !important;
+	color: #FFFFFF !important;
+	border-bottom: 1px solid var(--ce-red-800) !important;
+	padding: 32px 24px !important;
+	box-shadow: 0 6px 24px -10px rgba(127,29,29,0.55);
+}
+.ce-theme-red .ce-hero-eyebrow {
+	color: #FECACA !important;
+	letter-spacing: 0.18em;
+}
+.ce-theme-red .ce-hero-title {
+	color: #FFFFFF !important;
+	font-size: 32px !important;
+	letter-spacing: -0.02em;
+	text-shadow: 0 2px 12px rgba(0,0,0,0.22);
+}
+.ce-theme-red .ce-hero-sub {
+	color: #FEE2E2 !important;
+	font-weight: 500;
+}
+.ce-theme-red .ce-hero-btn {
+	background: rgba(255,255,255,0.14) !important;
+	border: 1px solid rgba(255,255,255,0.28) !important;
+	color: #FFFFFF !important;
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+	transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+.ce-theme-red .ce-hero-btn:hover {
+	background: rgba(255,255,255,0.22) !important;
+	border-color: rgba(255,255,255,0.5) !important;
+	color: #FFFFFF !important;
+	transform: translateY(-1px);
+}
+
+/* ---------------- SECTIONS ---------------- */
+.ce-theme-red .ce-section { padding: 20px 24px 0; max-width: 1280px; margin: 0 auto; }
+.ce-theme-red .ce-section-head {
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--ce-red-700);
+	font-weight: 700;
+	margin: 8px 0 14px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.ce-theme-red .ce-section-head::before {
+	content: '';
+	display: inline-block;
+	width: 28px; height: 3px;
+	background: linear-gradient(90deg, var(--ce-red-600), var(--ce-red-300));
+	border-radius: 3px;
+}
+
+/* ---------------- KPI CARDS ---------------- */
+.ce-theme-red .ce-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 16px;
+}
+.ce-theme-red .ce-card-red {
+	position: relative;
+	background: #FFFFFF;
+	border: 1px solid var(--ce-red-100);
+	border-radius: 16px;
+	padding: 20px;
+	box-shadow: 0 8px 24px -16px rgba(220,38,38,0.45);
+	transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+	overflow: hidden;
+}
+.ce-theme-red .ce-card-red::before {
+	content: '';
+	position: absolute;
+	inset: 0 0 auto 0;
+	height: 4px;
+	background: linear-gradient(90deg, var(--ce-red-600), var(--ce-red-400));
+}
+.ce-theme-red .ce-card-red:hover {
+	transform: translateY(-2px);
+	border-color: var(--ce-red-300);
+	box-shadow: 0 16px 32px -18px rgba(220,38,38,0.55);
+}
+.ce-theme-red .ce-card-top {
+	display: flex; align-items: center; justify-content: space-between;
+	margin-bottom: 12px;
+}
+.ce-theme-red .ce-card-icon {
+	width: 38px; height: 38px;
+	display: flex; align-items: center; justify-content: center;
+	border-radius: 10px;
+	background: linear-gradient(135deg, var(--ce-red-100), var(--ce-red-200));
+	color: var(--ce-red-800);
+	font-size: 18px;
+}
+.ce-theme-red .ce-card-value {
+	font-size: 28px;
+	font-weight: 800;
+	color: var(--ce-red-900);
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+}
+.ce-theme-red .ce-card-label {
+	margin-top: 6px;
+	font-size: 13px;
+	color: #6B7280;
+	font-weight: 600;
+}
+.ce-theme-red .ce-card-sub {
+	margin-top: 4px;
+	font-size: 12px;
+	color: var(--ce-red-700);
+	font-weight: 500;
+}
+.ce-theme-red .ce-delta {
+	font-size: 12px;
+	font-weight: 700;
+	padding: 4px 8px;
+	border-radius: 999px;
+}
+.ce-theme-red .ce-delta.up   { background: #DCFCE7; color: #166534; }
+.ce-theme-red .ce-delta.down { background: var(--ce-red-100); color: var(--ce-red-800); }
+
+.ce-theme-red .ce-skeleton-card {
+	height: 132px;
+	border-radius: 16px;
+	background: linear-gradient(90deg, #FFF1F1 0%, #FEE2E2 50%, #FFF1F1 100%);
+	background-size: 200% 100%;
+	animation: ce-shimmer 1.4s infinite linear;
+	border: 1px solid var(--ce-red-100);
+}
+@keyframes ce-shimmer {
+	0%   { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
+}
+
+/* ---------------- SPLIT / PANELS ---------------- */
+.ce-theme-red .ce-split {
+	display: grid;
+	grid-template-columns: 1.4fr 1fr;
+	gap: 16px;
+}
+@media (max-width: 980px) {
+	.ce-theme-red .ce-split { grid-template-columns: 1fr; }
+}
+.ce-theme-red .ce-panel {
+	background: #FFFFFF;
+	border: 1px solid var(--ce-red-100);
+	border-radius: 16px;
+	box-shadow: 0 8px 20px -16px rgba(127,29,29,0.35);
+	overflow: hidden;
+}
+.ce-theme-red .ce-panel-tall { min-height: 320px; }
+.ce-theme-red .ce-panel-head {
+	display: flex; align-items: center; justify-content: space-between;
+	padding: 14px 18px;
+	border-bottom: 1px solid var(--ce-red-100);
+	background: linear-gradient(180deg, #FFF7F7 0%, #FFFFFF 100%);
+}
+.ce-theme-red .ce-panel-title {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--ce-red-900);
+}
+.ce-theme-red .ce-panel-link {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--ce-red-700);
+	text-decoration: none;
+}
+.ce-theme-red .ce-panel-link:hover { color: var(--ce-red-900); text-decoration: underline; }
+.ce-theme-red .ce-panel-body { padding: 8px 6px; }
+
+/* ---------------- ROWS (lists in panels) ---------------- */
+.ce-theme-red .ce-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	border-radius: 10px;
+	margin: 4px 6px;
+	color: var(--ce-red-ink);
+	text-decoration: none !important;
+	transition: background .12s ease, transform .12s ease;
+}
+.ce-theme-red .ce-row:hover {
+	background: var(--ce-red-50);
+	transform: translateX(2px);
+}
+.ce-theme-red .ce-row-title {
+	font-weight: 700;
+	font-size: 13px;
+	color: var(--ce-red-900);
+}
+.ce-theme-red .ce-row-sub {
+	font-size: 12px;
+	color: #6B7280;
+	margin-top: 2px;
+}
+.ce-theme-red .ce-row-side { text-align: right; }
+.ce-theme-red .ce-amount {
+	font-weight: 800;
+	color: var(--ce-red-700);
+	font-size: 13px;
+}
+
+/* ---------------- HEALTH SCORE ---------------- */
+.ce-theme-red .ce-score {
+	width: 42px; height: 42px;
+	border-radius: 50%;
+	display: flex; align-items: center; justify-content: center;
+	font-weight: 800;
+	font-size: 13px;
+	color: #FFFFFF;
+	background: conic-gradient(var(--ce-red-600) calc(var(--p, 50) * 1%), var(--ce-red-100) 0);
+	position: relative;
+}
+.ce-theme-red .ce-score::after {
+	content: attr(data-score);
+	position: absolute;
+	inset: 4px;
+	background: var(--ce-red-700);
+	border-radius: 50%;
+	display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------------- QUICK ACTIONS ---------------- */
+.ce-theme-red .ce-quick-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 12px;
+}
+.ce-theme-red .ce-quick {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 14px;
+	border-radius: 14px;
+	background: #FFFFFF;
+	border: 1px solid var(--ce-red-100);
+	color: var(--ce-red-900) !important;
+	text-decoration: none !important;
+	transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+}
+.ce-theme-red .ce-quick:hover {
+	transform: translateY(-2px);
+	border-color: var(--ce-red-400);
+	background: linear-gradient(135deg, #FFFFFF 0%, var(--ce-red-50) 100%);
+	box-shadow: 0 12px 24px -16px rgba(220,38,38,0.45);
+}
+.ce-theme-red .ce-quick-icon {
+	width: 38px; height: 38px;
+	border-radius: 10px;
+	display: flex; align-items: center; justify-content: center;
+	background: var(--ce-red-100) !important;
+	color: var(--ce-red-800) !important;
+	font-size: 18px;
+}
+.ce-theme-red .ce-quick:hover .ce-quick-icon {
+	background: linear-gradient(135deg, var(--ce-red-600), var(--ce-red-800)) !important;
+	color: #FFFFFF !important;
+}
+.ce-theme-red .ce-quick-label {
+	font-weight: 600;
+	font-size: 13px;
+}
+
+/* ---------------- EMPTY / SKELETONS ---------------- */
+.ce-theme-red .ce-empty {
+	padding: 24px;
+	text-align: center;
+	color: var(--ce-red-800);
+	font-size: 13px;
+	background: var(--ce-red-50);
+	border: 1px dashed var(--ce-red-200);
+	border-radius: 12px;
+	margin: 8px;
+}
+.ce-theme-red .ce-skeleton {
+	height: 44px;
+	margin: 8px;
+	border-radius: 10px;
+	background: linear-gradient(90deg, #FFF1F1 0%, #FEE2E2 50%, #FFF1F1 100%);
+	background-size: 200% 100%;
+	animation: ce-shimmer 1.4s infinite linear;
+}
+
+/* ---------------- frappe Chart tweak (red lines) ---------------- */
+.ce-theme-red .frappe-chart .line-graph .stroke { stroke: var(--ce-red-600) !important; }
+.ce-theme-red .frappe-chart .axis text { fill: var(--ce-red-800) !important; }
+.ce-theme-red .frappe-chart .data-points .stroke { stroke: var(--ce-red-700) !important; }
+
+/* ---------------- Hide native workspace when our dashboard is active ---------------- */
+body.ce-sell-active .layout-main-section > *:not(.ce-sell-root) {
+	display: none !important;
+}
+body.ce-sell-active .page-head,
+body.ce-sell-active .layout-side-section .standard-sidebar-section[data-skip] {
+	/* Keep native sidebar visible — only hide if you also want to hide it: */
+	/* display: none !important; */
+}
+body.ce-sell-active .ce-sell-root {
+	display: block !important;
+}
+/* Also keep the original :has() rule as a fallback for browsers that support it */
+.layout-main-section:has(> .ce-sell-root) > :not(.ce-sell-root) {
+	display: none !important;
+}

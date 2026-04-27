@@ -4,3 +4,5 @@
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+custom_erp.patches.v1_0.install_customer_health_score_field
+custom_erp.patches.v1_0.install_selling_dashboard_script
