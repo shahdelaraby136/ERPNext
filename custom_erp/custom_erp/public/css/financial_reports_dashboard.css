@@ -1,0 +1,33 @@
+/* ============================================================
+   Custom Financial Reports Dashboard — reuses .ce-theme-brand.
+   Owns the root container + body-class hide rules for /app/financial-reports.
+   ============================================================ */
+
+.ce-fin-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-fin {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-fin-active .layout-main-section > *:not(.ce-fin-root) { display: none !important; }
+body.ce-fin-active .ce-fin-root { display: block !important; }
+.layout-main-section:has(> .ce-fin-root) > :not(.ce-fin-root) { display: none !important; }
+
+body.ce-fin-active .container.page-container,
+body.ce-fin-active .page-container,
+body.ce-fin-active .layout-main,
+body.ce-fin-active .layout-main-section,
+body.ce-fin-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-fin-active .ds-container { max-width: 1600px !important; }

@@ -1,10 +1,11 @@
-/* Custom Manufacturing Workspace Redesign — same brand theme as Selling
-   Hijacks /app/manufacturing and renders Hero + KPIs + Quick Actions + chart + lists.
-   Data comes from Server Script: manufacturing_dashboard_data
+/* Custom Financial Reports Workspace Redesign — same brand theme.
+   Hijacks /app/financial-reports — pure reports hub.
+   Hero buttons OPEN reports (no new-doc); quick actions navigate.
+   Data comes from Server Script: financial_reports_dashboard_data
 */
 
 (function () {
-	const TAG = '[ce-mfg]';
+	const TAG = '[ce-fin]';
 	const log = (...a) => { try { console.log(TAG, ...a); } catch (e) {} };
 
 	log('script loaded');
@@ -13,21 +14,22 @@
 		primary: '#2563EB',
 		dark:    '#1E40AF',
 		accent:  '#3B82F6',
+		expense: '#DC2626',
 	};
 
-	function isMfgPath() {
+	function isFinPath() {
 		try {
 			const r = (window.frappe && frappe.get_route && frappe.get_route()) || [];
 			const path = (window.location.pathname || '');
 			const hash = (window.location.hash || '');
 			for (let i = 0; i < Math.min(r.length, 3); i++) {
 				const seg = (r[i] || '').toString().toLowerCase();
-				if (seg === 'manufacturing') return true;
+				if (seg === 'financial-reports' || seg === 'financial reports') return true;
 			}
 			const p = path.toLowerCase();
-			if (p === '/app/manufacturing' || p.startsWith('/app/manufacturing/') || p.startsWith('/app/manufacturing?')) return true;
+			if (p === '/app/financial-reports' || p.startsWith('/app/financial-reports/') || p.startsWith('/app/financial-reports?')) return true;
 			const h = hash.toLowerCase();
-			if (h.includes('/manufacturing')) return true;
+			if (h.includes('/financial-reports')) return true;
 			return false;
 		} catch (e) { log('route check error', e); return false; }
 	}
@@ -51,7 +53,7 @@
 	}
 
 	function ensureBodyFlag(on) {
-		document.body.classList.toggle('ce-mfg-active', !!on);
+		document.body.classList.toggle('ce-fin-active', !!on);
 	}
 
 	function mount() {
@@ -62,10 +64,10 @@
 		const layout = document.querySelector('.layout-main-section');
 		if (!layout) return false;
 
-		let root = layout.querySelector(':scope > .ce-mfg-root');
+		let root = layout.querySelector(':scope > .ce-fin-root');
 		if (!root) {
 			root = document.createElement('div');
-			root.className = 'ce-mfg-root ce-theme-brand';
+			root.className = 'ce-fin-root ce-theme-brand';
 			layout.insertBefore(root, layout.firstChild);
 		}
 		ensureBodyFlag(true);
@@ -77,7 +79,7 @@
 	function unmount() {
 		mounted = false;
 		ensureBodyFlag(false);
-		document.querySelectorAll('.ce-mfg-root').forEach(n => n.remove());
+		document.querySelectorAll('.ce-fin-root').forEach(n => n.remove());
 		log('unmounted');
 	}
 
@@ -89,19 +91,19 @@
 			|| (window.frappe && frappe.session && frappe.session.user) || '';
 
 		root.innerHTML = `
-			<div class="ce-hero ce-hero-mfg">
+			<div class="ce-hero ce-hero-fin">
 				<div class="ds-container">
 					<div class="ce-hero-inner">
 						<div class="ce-hero-text">
-							<div class="ce-hero-eyebrow">${esc(__('Manufacturing'))}</div>
-							<h1 class="ce-hero-title">${esc(__('Manufacturing Dashboard'))}</h1>
+							<div class="ce-hero-eyebrow">${esc(__('Financial Reports'))}</div>
+							<h1 class="ce-hero-title">${esc(__('Financial Reports Dashboard'))}</h1>
 							<div class="ce-hero-sub">${esc(today)}</div>
 						</div>
 						<div class="ce-hero-actions">
-							<button class="btn ce-hero-btn" data-action="new-wo">⚙️ ${esc(__('Work Order'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-bom">🔧 ${esc(__('BOM'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-pp">📋 ${esc(__('Production Plan'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-jc">🛠️ ${esc(__('Job Card'))}</button>
+							<a class="btn ce-hero-btn" href="/app/query-report/Balance Sheet">📊 ${esc(__('Balance Sheet'))}</a>
+							<a class="btn ce-hero-btn" href="/app/query-report/Profit and Loss Statement">📈 ${esc(__('P&L Statement'))}</a>
+							<a class="btn ce-hero-btn" href="/app/query-report/Cash Flow">💸 ${esc(__('Cash Flow'))}</a>
+							<a class="btn ce-hero-btn" href="/app/query-report/General Ledger">📒 ${esc(__('General Ledger'))}</a>
 						</div>
 					</div>
 				</div>
@@ -109,32 +111,32 @@
 
 			<div class="ds-container">
 				<section class="ds-section--md">
-					<div class="ce-section-head">${esc(__('Production pulse'))}</div>
-					<div class="ds-grid" id="ce-mfg-stats">
+					<div class="ce-section-head">${esc(__('Financial pulse (rolling)'))}</div>
+					<div class="ds-grid" id="ce-fin-stats">
 						${[1,2,3,4].map(()=>'<div class="ds-col-3 ce-card ce-skeleton-card"></div>').join('')}
 					</div>
 				</section>
 
 				<section class="ds-section--md">
-					<div class="ce-section-head">${esc(__('Quick actions'))}</div>
-					<div class="ds-grid" id="ce-mfg-quick"></div>
+					<div class="ce-section-head">${esc(__('Quick reports'))}</div>
+					<div class="ds-grid" id="ce-fin-quick"></div>
 				</section>
 
 				<section class="ds-section--md">
 					<div class="ds-grid">
 						<div class="ds-col-8 ce-panel ce-panel-tall">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Completed Work Orders — last 12 months'))}</div>
-								<a class="ce-panel-link" href="/app/work-order">${esc(__('Work Orders'))} →</a>
+								<div class="ce-panel-title">${esc(__('Revenue vs Expenses — last 12 months'))}</div>
+								<a class="ce-panel-link" href="/app/query-report/Profit and Loss Statement">${esc(__('Open P&L'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-mfg-trend-chart" style="min-height:260px;"></div>
+							<div class="ce-panel-body" id="ce-fin-trend-chart" style="min-height:260px;"></div>
 						</div>
 						<div class="ds-col-4 ce-panel ce-panel-tall">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Top items produced (12 mo)'))}</div>
-								<a class="ce-panel-link" href="/app/item">${esc(__('All items'))} →</a>
+								<div class="ce-panel-title">${esc(__('Cash & bank accounts'))}</div>
+								<a class="ce-panel-link" href="/app/account?account_type=%5B%22in%22%2C%5B%22Cash%22%2C%22Bank%22%5D%5D">${esc(__('All accounts'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-mfg-top-items">
+							<div class="ce-panel-body" id="ce-fin-cash-accounts">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
@@ -145,19 +147,19 @@
 					<div class="ds-grid">
 						<div class="ds-col-6 ce-panel">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Open work orders'))}</div>
-								<a class="ce-panel-link" href="/app/work-order">${esc(__('View all'))} →</a>
+								<div class="ce-panel-title">${esc(__('Outstanding receivables'))}</div>
+								<a class="ce-panel-link" href="/app/query-report/Accounts Receivable">${esc(__('AR Report'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-mfg-open-wo">
+							<div class="ce-panel-body" id="ce-fin-receivables">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
 						<div class="ds-col-6 ce-panel">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Open job cards'))}</div>
-								<a class="ce-panel-link" href="/app/job-card">${esc(__('View all'))} →</a>
+								<div class="ce-panel-title">${esc(__('Outstanding payables'))}</div>
+								<a class="ce-panel-link" href="/app/query-report/Accounts Payable">${esc(__('AP Report'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-mfg-open-jc">
+							<div class="ce-panel-body" id="ce-fin-payables">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
@@ -166,8 +168,7 @@
 			</div>
 		`;
 
-		bindActions(root);
-		renderQuickActions(root.querySelector('#ce-mfg-quick'));
+		renderQuickActions(root.querySelector('#ce-fin-quick'));
 		loadData(root);
 	}
 
@@ -178,30 +179,17 @@
 		}
 	}
 
-	function bindActions(root) {
-		const newDoc = (dt) => () => frappe.new_doc(dt);
-		const map = {
-			'new-wo':  newDoc('Work Order'),
-			'new-bom': newDoc('BOM'),
-			'new-pp':  newDoc('Production Plan'),
-			'new-jc':  newDoc('Job Card'),
-		};
-		root.querySelectorAll('[data-action]').forEach(b => {
-			b.addEventListener('click', () => { const a = b.dataset.action; if (map[a]) map[a](); });
-		});
-	}
-
 	function renderQuickActions(host) {
 		if (!host) return;
 		const items = [
-			{ label: __('New Work Order'),     icon: '⚙️', href: '/app/work-order/new' },
-			{ label: __('New BOM'),            icon: '🔧', href: '/app/bom/new' },
-			{ label: __('New Production Plan'),icon: '📋', href: '/app/production-plan/new' },
-			{ label: __('New Job Card'),       icon: '🛠️', href: '/app/job-card/new' },
-			{ label: __('Workstations'),       icon: '🏭', href: '/app/workstation' },
-			{ label: __('Operations'),         icon: '🔩', href: '/app/operation' },
-			{ label: __('Production Planning'),icon: '📊', href: '/app/query-report/Production Analytics' },
-			{ label: __('Work Orders'),        icon: '📂', href: '/app/work-order' },
+			{ label: __('Trial Balance'),         icon: '⚖️', href: '/app/query-report/Trial Balance' },
+			{ label: __('Accounts Receivable'),   icon: '💰', href: '/app/query-report/Accounts Receivable' },
+			{ label: __('Accounts Payable'),      icon: '💳', href: '/app/query-report/Accounts Payable' },
+			{ label: __('Customer Ledger'),       icon: '👤', href: '/app/query-report/Customer Ledger Summary' },
+			{ label: __('Supplier Ledger'),       icon: '🏭', href: '/app/query-report/Supplier Ledger Summary' },
+			{ label: __('Sales Register'),        icon: '🧾', href: '/app/query-report/Sales Register' },
+			{ label: __('Purchase Register'),     icon: '📋', href: '/app/query-report/Purchase Register' },
+			{ label: __('Tax Detail'),            icon: '🧮', href: '/app/query-report/Tax Detail' },
 		];
 		host.innerHTML = items.map(i => `
 			<a class="ds-col-3 ce-quick ce-quick-rose" href="${i.href}">
@@ -211,40 +199,43 @@
 		`).join('');
 	}
 
-	function fmtNumber(v) {
-		const n = Number(v || 0);
-		if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
-		return Math.round(n).toLocaleString();
+	function fmtMoney(v, currency) {
+		try {
+			if (typeof format_currency === 'function') return format_currency(v || 0, currency);
+			return String(frappe.format(v || 0, { fieldtype: 'Currency' })).replace(/<[^>]+>/g, '');
+		} catch (e) { return (v || 0).toLocaleString(); }
 	}
 
 	function loadData(root) {
-		log('loading data from server script: manufacturing_dashboard_data');
+		log('loading data from server script: financial_reports_dashboard_data');
 		frappe.call({
-			method: 'manufacturing_dashboard_data',
+			method: 'financial_reports_dashboard_data',
 			callback: (r) => {
 				log('server script response:', r);
 				const data = (r && r.message) || {};
-				renderStats(root.querySelector('#ce-mfg-stats'), data.stats || {});
-				renderTrendChart(root.querySelector('#ce-mfg-trend-chart'), data.completed_series || []);
-				renderRows(root.querySelector('#ce-mfg-top-items'), data.top_items || [],         topItemRow,  __('No production yet'));
-				renderRows(root.querySelector('#ce-mfg-open-wo'),   data.open_work_orders || [],  openWORow,   __('No open work orders'));
-				renderRows(root.querySelector('#ce-mfg-open-jc'),   data.open_job_cards || [],    openJCRow,   __('No open job cards'));
+				renderStats(root.querySelector('#ce-fin-stats'), data.stats || {});
+				renderTrendChart(root.querySelector('#ce-fin-trend-chart'),
+					data.labels || [], data.revenue_series || [], data.expense_series || []);
+				renderRows(root.querySelector('#ce-fin-cash-accounts'), data.cash_accounts || [],          accountRow,    __('No cash/bank accounts'));
+				renderRows(root.querySelector('#ce-fin-receivables'),   data.outstanding_receivables || [], receivableRow, __('No outstanding receivables'));
+				renderRows(root.querySelector('#ce-fin-payables'),      data.outstanding_payables || [],    payableRow,    __('No outstanding payables'));
 			},
 			error: (e) => {
 				log('server script call failed:', e);
-				const stats = root.querySelector('#ce-mfg-stats');
-				if (stats) stats.innerHTML = `<div class="ce-empty">${esc(__('Could not load dashboard data — make sure Server Script "manufacturing_dashboard_data" is enabled.'))}</div>`;
+				const stats = root.querySelector('#ce-fin-stats');
+				if (stats) stats.innerHTML = `<div class="ce-empty">${esc(__('Could not load dashboard data — make sure Server Script "financial_reports_dashboard_data" is enabled.'))}</div>`;
 			},
 		});
 	}
 
 	function renderStats(host, s) {
 		if (!host) return;
+		const net = Number(s.net_month || 0);
 		const cards = [
-			{ label: __('Open Work Orders'),       value: (s.open_wo_count || 0), sub: fmtNumber(s.open_wo_pending_qty) + ' ' + __('pending qty'), icon: '⚙️' },
-			{ label: __('Active BOMs'),            value: (s.active_boms || 0),                                       icon: '🔧' },
-			{ label: __('Open Job Cards'),         value: (s.open_jc || 0),                                            icon: '🛠️' },
-			{ label: __('Completed (this month)'), value: (s.completed_month || 0), delta: s.completed_delta_pct,      icon: '✅' },
+			{ label: __('Revenue (this month)'),  value: fmtMoney(s.revenue_month), delta: s.revenue_delta_pct, icon: '💰' },
+			{ label: __('Expenses (this month)'), value: fmtMoney(s.expense_month), icon: '💳' },
+			{ label: __('Net (this month)'),      value: fmtMoney(net), sub: net >= 0 ? __('profit') : __('loss'), icon: net >= 0 ? '📈' : '📉' },
+			{ label: __('Cash + Bank balance'),   value: fmtMoney(s.cash_bank_balance), icon: '🏦' },
 		];
 		host.innerHTML = cards.map(c => `
 			<div class="ds-col-3 ce-card ce-card-brand">
@@ -259,18 +250,24 @@
 		`).join('');
 	}
 
-	function renderTrendChart(el, series) {
+	function renderTrendChart(el, labels, revenue, expense) {
 		if (!el) return;
 		el.innerHTML = '';
-		if (!series.length) { el.innerHTML = `<div class="ce-empty">${esc(__('No production data'))}</div>`; return; }
+		if (!labels.length) { el.innerHTML = `<div class="ce-empty">${esc(__('No financial data yet'))}</div>`; return; }
 		try {
 			new frappe.Chart(el, {
 				type: 'bar',
-				colors: [BRAND_PALETTE.primary],
+				colors: [BRAND_PALETTE.primary, BRAND_PALETTE.expense],
 				height: 260,
 				axisOptions: { xAxisMode: 'tick' },
 				barOptions: { spaceRatio: 0.4 },
-				data: { labels: series.map(p => p.label), datasets: [{ name: __('Completed WOs'), values: series.map(p => p.value || 0) }] },
+				data: {
+					labels: labels,
+					datasets: [
+						{ name: __('Revenue'),  values: revenue },
+						{ name: __('Expenses'), values: expense },
+					],
+				},
 			});
 		} catch (e) {
 			log('chart render failed', e);
@@ -284,55 +281,50 @@
 		host.innerHTML = items.map(rowFn).join('');
 	}
 
-	function topItemRow(it) {
-		const planned = Number(it.planned_qty || 0);
-		const produced = Number(it.produced_qty || 0);
+	function accountRow(a) {
 		return `
-			<a class="ce-row" href="/app/item/${encodeURIComponent(it.name)}">
+			<a class="ce-row" href="/app/account/${encodeURIComponent(a.name)}">
 				<div class="ce-row-main">
-					<div class="ce-row-title">${esc(it.item_name || it.name)}</div>
-					<div class="ce-row-sub">${esc(it.item_group || '')} · ${Number(it.order_count || 0)} ${esc(__('WOs'))}</div>
+					<div class="ce-row-title">${esc(a.account_name || a.name)}</div>
+					<div class="ce-row-sub">${esc(a.account_type || '')} · ${esc(a.company || '')}</div>
 				</div>
 				<div class="ce-row-side">
-					<div class="ce-amount">${fmtNumber(produced)} / ${fmtNumber(planned)}</div>
+					<div class="ce-amount">${fmtMoney(a.balance)}</div>
 				</div>
 			</a>`;
 	}
 
-	function openWORow(w) {
-		const planned = Number(w.qty || 0);
-		const produced = Number(w.produced_qty || 0);
-		const pct = planned > 0 ? Math.round((produced / planned) * 100) : 0;
+	function receivableRow(r) {
 		return `
-			<a class="ce-row" href="/app/work-order/${encodeURIComponent(w.name)}">
+			<a class="ce-row" href="/app/sales-invoice/${encodeURIComponent(r.name)}">
 				<div class="ce-row-main">
-					<div class="ce-row-title">${esc(w.production_item || w.name)}</div>
-					<div class="ce-row-sub">${esc(w.name)} · ${esc(w.status || '')}</div>
+					<div class="ce-row-title">${esc(r.name)}</div>
+					<div class="ce-row-sub">${esc(r.customer_name || r.customer || '')}</div>
 				</div>
 				<div class="ce-row-side">
-					<div class="ce-amount">${pct}%</div>
-					<div class="ce-row-sub">${esc(w.planned_end_date || '')}</div>
+					<div class="ce-amount">${fmtMoney(r.outstanding_amount)}</div>
+					<div class="ce-row-sub">${esc(r.due_date || r.status || '')}</div>
 				</div>
 			</a>`;
 	}
 
-	function openJCRow(j) {
+	function payableRow(p) {
 		return `
-			<a class="ce-row" href="/app/job-card/${encodeURIComponent(j.name)}">
+			<a class="ce-row" href="/app/purchase-invoice/${encodeURIComponent(p.name)}">
 				<div class="ce-row-main">
-					<div class="ce-row-title">${esc(j.production_item || j.name)}</div>
-					<div class="ce-row-sub">${esc(j.operation || '')} · ${esc(j.workstation || '')}</div>
+					<div class="ce-row-title">${esc(p.name)}</div>
+					<div class="ce-row-sub">${esc(p.supplier_name || p.supplier || '')}</div>
 				</div>
 				<div class="ce-row-side">
-					<div class="ce-amount">${esc(j.status || '')}</div>
-					<div class="ce-row-sub">${esc(j.expected_end_date || '')}</div>
+					<div class="ce-amount">${fmtMoney(p.outstanding_amount)}</div>
+					<div class="ce-row-sub">${esc(p.due_date || p.status || '')}</div>
 				</div>
 			</a>`;
 	}
 
 	function tick() {
-		const want = isMfgPath();
-		log('tick: isMfgPath =', want, 'mounted =', mounted);
+		const want = isFinPath();
+		log('tick: isFinPath =', want, 'mounted =', mounted);
 		if (want && !mounted) {
 			if (!mount()) { /* retry */ }
 		} else if (!want && mounted) {
@@ -345,7 +337,7 @@
 	function startObserver() {
 		if (observer) return;
 		observer = new MutationObserver(() => {
-			if (isMfgPath() && !document.querySelector('.ce-mfg-root')) {
+			if (isFinPath() && !document.querySelector('.ce-fin-root')) {
 				log('observer: workspace DOM changed, attempting mount');
 				mount();
 			}
@@ -357,7 +349,7 @@
 		if (window.frappe && frappe.router && typeof frappe.router.on === 'function') {
 			frappe.router.on('change', () => {
 				log('router change fired; route =', JSON.stringify(frappe.get_route()));
-				const want = isMfgPath();
+				const want = isFinPath();
 				if (!want) { unmount(); }
 				else { mounted = false; tick(); }
 			});
@@ -386,7 +378,7 @@
 			attempts++;
 			if (attempts > 50) { clearInterval(retry); return; }
 			if (mounted) { clearInterval(retry); return; }
-			if (isMfgPath()) tick();
+			if (isFinPath()) tick();
 		}, 200);
 	}
 

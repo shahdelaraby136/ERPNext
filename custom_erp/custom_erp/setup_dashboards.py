@@ -863,6 +863,164 @@ frappe.response["message"] = {
 '''
 
 
+FINANCIAL_REPORTS_DASHBOARD_SCRIPT = r'''
+# Server Script - Type: API
+# Returns aggregated metrics for the custom Financial Reports dashboard.
+# Sandbox-safe: only frappe.* APIs (no `import`, no built-in `float`).
+
+today = frappe.utils.today()
+month_start = frappe.utils.get_first_day(today)
+last_month_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -1))
+last_month_end = frappe.utils.get_last_day(frappe.utils.add_months(today, -1))
+twelve_months_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -11))
+
+def to_flt(v):
+    return frappe.utils.flt(v or 0)
+
+# ---- Revenue (this month / last month) ----
+rev_month = frappe.db.sql("""
+    SELECT COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabSales Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0].total
+
+rev_last = frappe.db.sql("""
+    SELECT COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabSales Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": last_month_start, "e": last_month_end}, as_dict=True)[0].total
+
+revenue_delta_pct = None
+if to_flt(rev_last) > 0:
+    revenue_delta_pct = ((to_flt(rev_month) - to_flt(rev_last)) / to_flt(rev_last)) * 100.0
+
+# ---- Expenses (this month / last month) ----
+exp_month = frappe.db.sql("""
+    SELECT COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0].total
+
+exp_last = frappe.db.sql("""
+    SELECT COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": last_month_start, "e": last_month_end}, as_dict=True)[0].total
+
+# ---- Net = Revenue - Expenses ----
+net_month = to_flt(rev_month) - to_flt(exp_month)
+
+# ---- Cash + Bank balance ----
+cash_bank = frappe.db.sql("""
+    SELECT COALESCE(SUM(gl.debit - gl.credit), 0) AS balance
+    FROM `tabGL Entry` gl
+    INNER JOIN `tabAccount` a ON a.name = gl.account
+    WHERE gl.is_cancelled = 0
+      AND a.account_type IN ('Cash', 'Bank')
+      AND a.disabled = 0
+""", as_dict=True)[0].balance
+
+# ---- 12-month revenue series ----
+rev_series_rows = frappe.db.sql("""
+    SELECT DATE_FORMAT(posting_date, %(fmt)s) AS m,
+           COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabSales Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date >= %(s)s
+    GROUP BY DATE_FORMAT(posting_date, %(grp)s)
+    ORDER BY m
+""", {"s": twelve_months_start, "fmt": "%Y-%m-01", "grp": "%Y-%m"}, as_dict=True)
+
+# ---- 12-month expense series ----
+exp_series_rows = frappe.db.sql("""
+    SELECT DATE_FORMAT(posting_date, %(fmt)s) AS m,
+           COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date >= %(s)s
+    GROUP BY DATE_FORMAT(posting_date, %(grp)s)
+    ORDER BY m
+""", {"s": twelve_months_start, "fmt": "%Y-%m-01", "grp": "%Y-%m"}, as_dict=True)
+
+labels = []
+revenue_values = []
+expense_values = []
+cursor = twelve_months_start
+rev_by_month = {row.m: to_flt(row.total) for row in rev_series_rows}
+exp_by_month = {row.m: to_flt(row.total) for row in exp_series_rows}
+for i in range(12):
+    key = frappe.utils.formatdate(cursor, "yyyy-MM-01")
+    labels.append(frappe.utils.formatdate(cursor, "MMM yy"))
+    revenue_values.append(rev_by_month.get(key, 0))
+    expense_values.append(exp_by_month.get(key, 0))
+    cursor = frappe.utils.add_months(cursor, 1)
+
+# ---- Outstanding receivables (open SI, top 6 by amount) ----
+outstanding_receivables = frappe.db.sql("""
+    SELECT name, customer, customer_name, due_date, outstanding_amount, status
+    FROM `tabSales Invoice`
+    WHERE docstatus = 1
+      AND outstanding_amount > 0
+    ORDER BY outstanding_amount DESC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Outstanding payables (open PI, top 6 by amount) ----
+outstanding_payables = frappe.db.sql("""
+    SELECT name, supplier, supplier_name, due_date, outstanding_amount, status
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND outstanding_amount > 0
+    ORDER BY outstanding_amount DESC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Top 6 cash/bank accounts by balance ----
+cash_accounts = frappe.db.sql("""
+    SELECT a.name AS name,
+           a.account_name AS account_name,
+           a.account_type AS account_type,
+           a.company AS company,
+           COALESCE(SUM(gl.debit - gl.credit), 0) AS balance
+    FROM `tabAccount` a
+    LEFT JOIN `tabGL Entry` gl ON gl.account = a.name AND gl.is_cancelled = 0
+    WHERE a.account_type IN ('Cash', 'Bank')
+      AND a.disabled = 0
+      AND a.is_group = 0
+    GROUP BY a.name
+    ORDER BY balance DESC
+    LIMIT 6
+""", as_dict=True)
+
+frappe.response["message"] = {
+    "stats": {
+        "revenue_month": to_flt(rev_month),
+        "revenue_delta_pct": revenue_delta_pct,
+        "expense_month": to_flt(exp_month),
+        "expense_last": to_flt(exp_last),
+        "net_month": net_month,
+        "cash_bank_balance": to_flt(cash_bank),
+    },
+    "labels": labels,
+    "revenue_series": revenue_values,
+    "expense_series": expense_values,
+    "outstanding_receivables": outstanding_receivables,
+    "outstanding_payables": outstanding_payables,
+    "cash_accounts": cash_accounts,
+}
+'''
+
+
 def _upsert_server_script(name: str, script: str):
     if frappe.db.exists("Server Script", name):
         doc = frappe.get_doc("Server Script", name)
@@ -908,6 +1066,10 @@ def install_manufacturing_dashboard():
     _upsert_server_script("manufacturing_dashboard_data", MANUFACTURING_DASHBOARD_SCRIPT)
 
 
+def install_financial_reports_dashboard():
+    _upsert_server_script("financial_reports_dashboard_data", FINANCIAL_REPORTS_DASHBOARD_SCRIPT)
+
+
 def install_all():
     install_assets_dashboard()
     install_buying_dashboard()
@@ -916,3 +1078,4 @@ def install_all():
     install_stock_dashboard()
     install_subcontracting_dashboard()
     install_manufacturing_dashboard()
+    install_financial_reports_dashboard()

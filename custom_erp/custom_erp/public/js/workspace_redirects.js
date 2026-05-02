@@ -26,6 +26,7 @@
 		"stock":      "/app/stock",
 		"subcontracting": "/app/subcontracting",
 		"manufacturing":  "/app/manufacturing",
+		"financial reports": "/app/financial-reports",
 	};
 
 	function navigateDirect(target) {
@@ -37,7 +38,7 @@
 	}
 
 	function isOurDashboard(el) {
-		return !!(el && el.closest && el.closest(".ce-acc-root, .ce-inv-root, .ce-sell-root, .ce-asset-root, .ce-buy-root, .ce-proj-root, .ce-qual-root, .ce-stock-root, .ce-sub-root, .ce-mfg-root"));
+		return !!(el && el.closest && el.closest(".ce-acc-root, .ce-inv-root, .ce-sell-root, .ce-asset-root, .ce-buy-root, .ce-proj-root, .ce-qual-root, .ce-stock-root, .ce-sub-root, .ce-mfg-root, .ce-fin-root"));
 	}
 
 	// --- Strategy 1: capture-phase click & mousedown on the document ---

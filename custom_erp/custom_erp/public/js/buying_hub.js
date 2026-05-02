@@ -94,8 +94,8 @@
 					<div class="ce-hero-inner">
 						<div class="ce-hero-text">
 							<div class="ce-hero-eyebrow">${esc(__('Buying'))}</div>
-							<h1 class="ce-hero-title">${esc(__('Procurement Command Center'))}</h1>
-							<div class="ce-hero-sub">${esc(__('Welcome'))}, ${esc(fullName)} · ${esc(today)}</div>
+							<h1 class="ce-hero-title">${esc(__('Buying Dashboard'))}</h1>
+							<div class="ce-hero-sub">${esc(today)}</div>
 						</div>
 						<div class="ce-hero-actions">
 							<button class="btn ce-hero-btn" data-action="new-po">📦 ${esc(__('Purchase Order'))}</button>

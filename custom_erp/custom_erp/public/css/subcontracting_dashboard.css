@@ -12,7 +12,7 @@
 	padding-bottom: var(--sp-6);
 }
 
-.ce-theme-brand .ce-hero-sub {
+.ce-theme-brand .ce-hero-subc {
 	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
 	color: var(--text-primary) !important;
 	border-bottom: 1px solid var(--border) !important;

@@ -96,8 +96,8 @@
 					<div class="ce-hero-inner">
 						<div class="ce-hero-text">
 							<div class="ce-hero-eyebrow">${esc(__('Assets'))}</div>
-							<h1 class="ce-hero-title">${esc(__('Assets Command Center'))}</h1>
-							<div class="ce-hero-sub">${esc(__('Welcome'))}, ${esc(fullName)} · ${esc(today)}</div>
+							<h1 class="ce-hero-title">${esc(__('Assets Dashboard'))}</h1>
+							<div class="ce-hero-sub">${esc(today)}</div>
 						</div>
 						<div class="ce-hero-actions">
 							<button class="btn ce-hero-btn" data-action="new-asset">🏢 ${esc(__('Asset'))}</button>

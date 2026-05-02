@@ -278,13 +278,13 @@
 	function renderQuickActions(root) {
 		const actions = [
 			{ label: t("Invoicing"),         icon: "🧾", tone: "indigo", href: "/app/invoicing" },
-			{ label: t("Payments"),          icon: "💳", tone: "violet", href: "/app/payments" },
+			{ label: t("Payments"),          icon: "💳", tone: "violet", href: "/app/payment-entry" },
 			{ label: t("Financial Reports"), icon: "📊", tone: "teal",   href: "/app/financial-reports" },
-			{ label: t("Accounts Setup"),    icon: "⚙️", tone: "slate",  href: "/app/accounts-setup" },
-			{ label: t("Taxes"),             icon: "%",  tone: "amber",  href: "/app/taxes" },
-			{ label: t("Banking"),           icon: "🏦", tone: "indigo", href: "/app/banking" },
+			{ label: t("Accounts Setup"),    icon: "⚙️", tone: "slate",  href: "/app/accounts-settings" },
+			{ label: t("Taxes"),             icon: "%",  tone: "amber",  href: "/app/tax-rule" },
+			{ label: t("Banking"),           icon: "🏦", tone: "indigo", href: "/app/bank-transaction" },
 			{ label: t("Budget"),            icon: "💰", tone: "green",  href: "/app/budget" },
-			{ label: t("Share Management"),  icon: "📈", tone: "violet", href: "/app/share-management" },
+			{ label: t("Share Management"),  icon: "📈", tone: "violet", href: "/app/shareholder" },
 			{ label: t("Subscription"),      icon: "🔁", tone: "rose",   href: "/app/subscription" },
 		];
 		const wrap = root.querySelector("#ce-acc-quick");

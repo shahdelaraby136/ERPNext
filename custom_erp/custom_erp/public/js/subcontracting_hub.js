@@ -89,13 +89,13 @@
 			|| (window.frappe && frappe.session && frappe.session.user) || '';
 
 		root.innerHTML = `
-			<div class="ce-hero ce-hero-sub">
+			<div class="ce-hero ce-hero-subc">
 				<div class="ds-container">
 					<div class="ce-hero-inner">
 						<div class="ce-hero-text">
 							<div class="ce-hero-eyebrow">${esc(__('Subcontracting'))}</div>
-							<h1 class="ce-hero-title">${esc(__('Subcontracting Command Center'))}</h1>
-							<div class="ce-hero-sub">${esc(__('Welcome'))}, ${esc(fullName)} · ${esc(today)}</div>
+							<h1 class="ce-hero-title">${esc(__('Subcontracting Dashboard'))}</h1>
+							<div class="ce-hero-sub">${esc(today)}</div>
 						</div>
 						<div class="ce-hero-actions">
 							<button class="btn ce-hero-btn" data-action="new-sco">📋 ${esc(__('Subcontracting Order'))}</button>

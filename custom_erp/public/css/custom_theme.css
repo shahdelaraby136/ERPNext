@@ -634,6 +634,66 @@ select.form-control:focus, textarea.form-control:focus {
 input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
 .checkbox label, .radio label { color: var(--text-primary) !important; }
 
+/* Reset the .input-area input rule for checkboxes/radios — they should stay
+   small squares, not stretch to 40px form-control height. Custom appearance
+   so the look stays consistent across browsers; checkmark drawn with SVG. */
+.input-area input[type="checkbox"],
+.input-area input[type="radio"],
+input[type="checkbox"],
+input[type="radio"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 16px !important;
+  height: 16px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 4px !important;
+  margin: 0 8px 0 0 !important;
+  background: var(--surface) !important;
+  vertical-align: middle;
+  cursor: pointer;
+  flex: none;
+  position: relative;
+  transition: background-color .12s ease, border-color .12s ease;
+}
+input[type="checkbox"]:hover,
+.input-area input[type="checkbox"]:hover,
+input[type="radio"]:hover,
+.input-area input[type="radio"]:hover {
+  border-color: var(--primary) !important;
+}
+input[type="checkbox"]:checked,
+.input-area input[type="checkbox"]:checked {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-7'/></svg>") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 12px 12px !important;
+}
+input[type="radio"],
+.input-area input[type="radio"] {
+  border-radius: 50% !important;
+}
+input[type="radio"]:checked,
+.input-area input[type="radio"]:checked {
+  border-color: var(--primary) !important;
+  background: radial-gradient(circle, var(--primary) 0 40%, var(--surface) 50% 100%) !important;
+}
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible,
+.input-area input[type="checkbox"]:focus-visible,
+.input-area input[type="radio"]:focus-visible {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px;
+}
+input[type="checkbox"]:disabled,
+input[type="radio"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ---- 9. Buttons — 40px height, primary/secondary/ghost/danger ------- */
 .btn {
   border-radius: var(--radius) !important;
@@ -757,6 +817,50 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
   border-color: var(--primary) !important;
   color: var(--primary) !important;
 }
+
+/* List-view toolbar — give the Filter / × / sort / sort-by buttons breathing
+   room. Frappe wraps each in its own .btn-group span; flex + gap on the
+   parents means they stop sitting flush against each other. */
+.filter-section,
+.sort-selector,
+.standard-filter-section,
+.list-row-actions,
+.filter-list,
+.filter-selector,
+.list-actions,
+.list-row-checkbox-actions,
+.row-actions,
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1);                /* 8px between toolbar items */
+}
+
+/* When btn-group is used to group related buttons keep them visually joined,
+   but separate the GROUPS from each other. */
+.filter-section .btn-group,
+.sort-selector .btn-group,
+.standard-filter-section .btn-group,
+.filter-list .btn-group,
+.list-actions .btn-group,
+.page-actions .btn-group {
+  margin: 0;
+}
+.filter-section .btn-group + .btn-group,
+.sort-selector .btn-group + .btn-group,
+.standard-filter-section .btn-group + .btn-group,
+.filter-list .btn-group + .btn-group,
+.list-actions .btn-group + .btn-group,
+.page-actions .btn-group + .btn-group { margin-left: 0; }
+
+/* Stand-alone .btn siblings (no group wrapping) inside these toolbars */
+.filter-section > .btn + .btn,
+.sort-selector > .btn + .btn,
+.standard-filter-section > .btn + .btn,
+.filter-list > .btn + .btn,
+.list-actions > .btn + .btn,
+.page-actions > .btn + .btn { margin-left: 0; }
 
 /* ---- 11. Tables — clean, scannable, 48-56px rows ---------------------- */
 .table {
