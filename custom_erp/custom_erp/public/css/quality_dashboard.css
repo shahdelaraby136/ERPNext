@@ -1,0 +1,34 @@
+/* ============================================================
+   Custom Quality Dashboard — reuses .ce-theme-brand from
+   selling_dashboard.css. This file owns the root container +
+   the body-class hide rules for /app/quality.
+   ============================================================ */
+
+.ce-qual-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-qual {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-qual-active .layout-main-section > *:not(.ce-qual-root) { display: none !important; }
+body.ce-qual-active .ce-qual-root { display: block !important; }
+.layout-main-section:has(> .ce-qual-root) > :not(.ce-qual-root) { display: none !important; }
+
+body.ce-qual-active .container.page-container,
+body.ce-qual-active .page-container,
+body.ce-qual-active .layout-main,
+body.ce-qual-active .layout-main-section,
+body.ce-qual-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-qual-active .ds-container { max-width: 1600px !important; }

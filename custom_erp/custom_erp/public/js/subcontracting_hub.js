@@ -1,10 +1,10 @@
-/* Custom Buying Workspace Redesign — same brand theme as Selling
-   Hijacks /app/buying and renders Hero + KPIs + spend chart + lists.
-   Data comes from Server Script: buying_dashboard_data
+/* Custom Subcontracting Workspace Redesign — same brand theme as Selling
+   Hijacks /app/subcontracting and renders Hero + KPIs + Quick Actions + chart + lists.
+   Data comes from Server Script: subcontracting_dashboard_data
 */
 
 (function () {
-	const TAG = '[ce-buy]';
+	const TAG = '[ce-sub]';
 	const log = (...a) => { try { console.log(TAG, ...a); } catch (e) {} };
 
 	log('script loaded');
@@ -15,19 +15,19 @@
 		accent:  '#3B82F6',
 	};
 
-	function isBuyingPath() {
+	function isSubcontractingPath() {
 		try {
 			const r = (window.frappe && frappe.get_route && frappe.get_route()) || [];
 			const path = (window.location.pathname || '');
 			const hash = (window.location.hash || '');
 			for (let i = 0; i < Math.min(r.length, 3); i++) {
 				const seg = (r[i] || '').toString().toLowerCase();
-				if (seg === 'buying') return true;
+				if (seg === 'subcontracting') return true;
 			}
 			const p = path.toLowerCase();
-			if (p === '/app/buying' || p.startsWith('/app/buying/') || p.startsWith('/app/buying?')) return true;
+			if (p === '/app/subcontracting' || p.startsWith('/app/subcontracting/') || p.startsWith('/app/subcontracting?')) return true;
 			const h = hash.toLowerCase();
-			if (h.includes('/buying')) return true;
+			if (h.includes('/subcontracting')) return true;
 			return false;
 		} catch (e) { log('route check error', e); return false; }
 	}
@@ -51,7 +51,7 @@
 	}
 
 	function ensureBodyFlag(on) {
-		document.body.classList.toggle('ce-buy-active', !!on);
+		document.body.classList.toggle('ce-sub-active', !!on);
 	}
 
 	function mount() {
@@ -62,10 +62,10 @@
 		const layout = document.querySelector('.layout-main-section');
 		if (!layout) return false;
 
-		let root = layout.querySelector(':scope > .ce-buy-root');
+		let root = layout.querySelector(':scope > .ce-sub-root');
 		if (!root) {
 			root = document.createElement('div');
-			root.className = 'ce-buy-root ce-theme-brand';
+			root.className = 'ce-sub-root ce-theme-brand';
 			layout.insertBefore(root, layout.firstChild);
 		}
 		ensureBodyFlag(true);
@@ -77,7 +77,7 @@
 	function unmount() {
 		mounted = false;
 		ensureBodyFlag(false);
-		document.querySelectorAll('.ce-buy-root').forEach(n => n.remove());
+		document.querySelectorAll('.ce-sub-root').forEach(n => n.remove());
 		log('unmounted');
 	}
 
@@ -89,19 +89,19 @@
 			|| (window.frappe && frappe.session && frappe.session.user) || '';
 
 		root.innerHTML = `
-			<div class="ce-hero ce-hero-buy">
+			<div class="ce-hero ce-hero-sub">
 				<div class="ds-container">
 					<div class="ce-hero-inner">
 						<div class="ce-hero-text">
-							<div class="ce-hero-eyebrow">${esc(__('Buying'))}</div>
-							<h1 class="ce-hero-title">${esc(__('Procurement Command Center'))}</h1>
+							<div class="ce-hero-eyebrow">${esc(__('Subcontracting'))}</div>
+							<h1 class="ce-hero-title">${esc(__('Subcontracting Command Center'))}</h1>
 							<div class="ce-hero-sub">${esc(__('Welcome'))}, ${esc(fullName)} · ${esc(today)}</div>
 						</div>
 						<div class="ce-hero-actions">
-							<button class="btn ce-hero-btn" data-action="new-po">📦 ${esc(__('Purchase Order'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-pi">🧾 ${esc(__('Purchase Invoice'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-supplier">🏭 ${esc(__('Supplier'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-mr">📝 ${esc(__('Material Request'))}</button>
+							<button class="btn ce-hero-btn" data-action="new-sco">📋 ${esc(__('Subcontracting Order'))}</button>
+							<button class="btn ce-hero-btn" data-action="new-sr">📥 ${esc(__('Subcontracting Receipt'))}</button>
+							<button class="btn ce-hero-btn" data-action="new-bom">🔧 ${esc(__('Subcontracting BOM'))}</button>
+							<button class="btn ce-hero-btn" data-action="new-inward">📦 ${esc(__('Inward Order'))}</button>
 						</div>
 					</div>
 				</div>
@@ -109,32 +109,32 @@
 
 			<div class="ds-container">
 				<section class="ds-section--md">
-					<div class="ce-section-head">${esc(__('Procurement pulse'))}</div>
-					<div class="ds-grid" id="ce-buy-stats">
+					<div class="ce-section-head">${esc(__('Subcontracting pulse'))}</div>
+					<div class="ds-grid" id="ce-sub-stats">
 						${[1,2,3,4].map(()=>'<div class="ds-col-3 ce-card ce-skeleton-card"></div>').join('')}
 					</div>
 				</section>
 
 				<section class="ds-section--md">
 					<div class="ce-section-head">${esc(__('Quick actions'))}</div>
-					<div class="ds-grid" id="ce-buy-quick"></div>
+					<div class="ds-grid" id="ce-sub-quick"></div>
 				</section>
 
 				<section class="ds-section--md">
 					<div class="ds-grid">
 						<div class="ds-col-8 ce-panel ce-panel-tall">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Spend — last 12 months'))}</div>
-								<a class="ce-panel-link" href="/app/purchase-invoice">${esc(__('Invoices'))} →</a>
+								<div class="ce-panel-title">${esc(__('Receipts — last 12 months'))}</div>
+								<a class="ce-panel-link" href="/app/subcontracting-receipt">${esc(__('Receipts'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-buy-spend-chart" style="min-height:260px;"></div>
+							<div class="ce-panel-body" id="ce-sub-trend-chart" style="min-height:260px;"></div>
 						</div>
 						<div class="ds-col-4 ce-panel ce-panel-tall">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Top suppliers (last 12 months)'))}</div>
+								<div class="ce-panel-title">${esc(__('Top suppliers (12 mo)'))}</div>
 								<a class="ce-panel-link" href="/app/supplier">${esc(__('All suppliers'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-buy-top-suppliers">
+							<div class="ce-panel-body" id="ce-sub-top-suppliers">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
@@ -145,19 +145,19 @@
 					<div class="ds-grid">
 						<div class="ds-col-6 ce-panel">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Open purchase orders'))}</div>
-								<a class="ce-panel-link" href="/app/purchase-order">${esc(__('View all'))} →</a>
+								<div class="ce-panel-title">${esc(__('Open subcontracting orders'))}</div>
+								<a class="ce-panel-link" href="/app/subcontracting-order">${esc(__('View all'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-buy-open-po">
+							<div class="ce-panel-body" id="ce-sub-open-sco">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
 						<div class="ds-col-6 ce-panel">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Overdue invoices'))}</div>
-								<a class="ce-panel-link" href="/app/purchase-invoice?status=Overdue">${esc(__('View all'))} →</a>
+								<div class="ce-panel-title">${esc(__('Recent receipts'))}</div>
+								<a class="ce-panel-link" href="/app/subcontracting-receipt">${esc(__('View all'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-buy-overdue">
+							<div class="ce-panel-body" id="ce-sub-recent-sr">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
@@ -167,7 +167,7 @@
 		`;
 
 		bindActions(root);
-		renderQuickActions(root.querySelector('#ce-buy-quick'));
+		renderQuickActions(root.querySelector('#ce-sub-quick'));
 		loadData(root);
 	}
 
@@ -181,10 +181,10 @@
 	function bindActions(root) {
 		const newDoc = (dt) => () => frappe.new_doc(dt);
 		const map = {
-			'new-po':       newDoc('Purchase Order'),
-			'new-pi':       newDoc('Purchase Invoice'),
-			'new-supplier': newDoc('Supplier'),
-			'new-mr':       newDoc('Material Request'),
+			'new-sco':    newDoc('Subcontracting Order'),
+			'new-sr':     newDoc('Subcontracting Receipt'),
+			'new-bom':    newDoc('Subcontracting BOM'),
+			'new-inward': newDoc('Subcontracting Inward Order'),
 		};
 		root.querySelectorAll('[data-action]').forEach(b => {
 			b.addEventListener('click', () => { const a = b.dataset.action; if (map[a]) map[a](); });
@@ -194,14 +194,14 @@
 	function renderQuickActions(host) {
 		if (!host) return;
 		const items = [
-			{ label: __('New Purchase Order'),       icon: '📦', href: '/app/purchase-order/new' },
-			{ label: __('New Purchase Invoice'),     icon: '🧾', href: '/app/purchase-invoice/new' },
-			{ label: __('New Supplier'),             icon: '🏭', href: '/app/supplier/new' },
-			{ label: __('New Material Request'),     icon: '📝', href: '/app/material-request/new' },
-			{ label: __('Request for Quotation'),    icon: '✉️', href: '/app/request-for-quotation' },
-			{ label: __('Supplier Quotation'),       icon: '💬', href: '/app/supplier-quotation' },
-			{ label: __('Items'),                    icon: '🏷️', href: '/app/item' },
-			{ label: __('Purchase Analytics'),       icon: '📊', href: '/app/query-report/Purchase Analytics' },
+			{ label: __('New Subcontracting Order'),  icon: '📋', href: '/app/subcontracting-order/new' },
+			{ label: __('New Subcontracting Receipt'),icon: '📥', href: '/app/subcontracting-receipt/new' },
+			{ label: __('New Subcontracting BOM'),    icon: '🔧', href: '/app/subcontracting-bom/new' },
+			{ label: __('New Inward Order'),          icon: '📦', href: '/app/subcontracting-inward-order/new' },
+			{ label: __('Suppliers'),                 icon: '🏭', href: '/app/supplier' },
+			{ label: __('Items'),                     icon: '🏷️', href: '/app/item' },
+			{ label: __('Subcontracting Orders'),     icon: '📂', href: '/app/subcontracting-order' },
+			{ label: __('Subcontracting Receipts'),   icon: '🗂️', href: '/app/subcontracting-receipt' },
 		];
 		host.innerHTML = items.map(i => `
 			<a class="ds-col-3 ce-quick ce-quick-rose" href="${i.href}">
@@ -219,22 +219,22 @@
 	}
 
 	function loadData(root) {
-		log('loading data from server script: buying_dashboard_data');
+		log('loading data from server script: subcontracting_dashboard_data');
 		frappe.call({
-			method: 'buying_dashboard_data',
+			method: 'subcontracting_dashboard_data',
 			callback: (r) => {
 				log('server script response:', r);
 				const data = (r && r.message) || {};
-				renderStats(root.querySelector('#ce-buy-stats'), data.stats || {});
-				renderSpendChart(root.querySelector('#ce-buy-spend-chart'), data.spend_series || []);
-				renderRows(root.querySelector('#ce-buy-top-suppliers'), data.top_suppliers || [],       topSupplierRow, __('No supplier spend yet'));
-				renderRows(root.querySelector('#ce-buy-open-po'),        data.open_purchase_orders || [], openPORow,      __('No open purchase orders'));
-				renderRows(root.querySelector('#ce-buy-overdue'),        data.overdue_invoices || [],     overdueRow,     __('No overdue invoices'));
+				renderStats(root.querySelector('#ce-sub-stats'), data.stats || {});
+				renderTrendChart(root.querySelector('#ce-sub-trend-chart'), data.receipts_series || []);
+				renderRows(root.querySelector('#ce-sub-top-suppliers'), data.top_suppliers || [],              topSupplierRow, __('No supplier activity yet'));
+				renderRows(root.querySelector('#ce-sub-open-sco'),       data.open_subcontracting_orders || [], openSCORow,     __('No open subcontracting orders'));
+				renderRows(root.querySelector('#ce-sub-recent-sr'),      data.recent_receipts || [],             receiptRow,     __('No receipts yet'));
 			},
 			error: (e) => {
 				log('server script call failed:', e);
-				const stats = root.querySelector('#ce-buy-stats');
-				if (stats) stats.innerHTML = `<div class="ce-empty">${esc(__('Could not load dashboard data — make sure Server Script "buying_dashboard_data" is enabled.'))}</div>`;
+				const stats = root.querySelector('#ce-sub-stats');
+				if (stats) stats.innerHTML = `<div class="ce-empty">${esc(__('Could not load dashboard data — make sure Server Script "subcontracting_dashboard_data" is enabled.'))}</div>`;
 			},
 		});
 	}
@@ -242,10 +242,10 @@
 	function renderStats(host, s) {
 		if (!host) return;
 		const cards = [
-			{ label: __('Spend (this month)'), value: fmtMoney(s.spend_month), delta: s.spend_delta_pct, icon: '💰' },
-			{ label: __('Open POs'),           value: (s.open_po_count || 0),  sub: fmtMoney(s.open_po_value), icon: '📦' },
-			{ label: __('Overdue invoices'),   value: (s.overdue_count || 0),  sub: fmtMoney(s.overdue_value), icon: '⚠️' },
-			{ label: __('Active suppliers'),   value: (s.total_suppliers || 0), icon: '🏭' },
+			{ label: __('Open SCOs'),            value: (s.open_sco_count || 0), sub: fmtMoney(s.open_sco_value), icon: '📋' },
+			{ label: __('Receipts (this month)'),value: (s.receipts_month || 0), delta: s.receipts_delta_pct,     icon: '📥' },
+			{ label: __('Receipt value (month)'),value: fmtMoney(s.receipts_value_month),                          icon: '💰' },
+			{ label: __('Active BOMs'),          value: (s.active_boms || 0),                                      icon: '🔧' },
 		];
 		host.innerHTML = cards.map(c => `
 			<div class="ds-col-3 ce-card ce-card-brand">
@@ -260,18 +260,18 @@
 		`).join('');
 	}
 
-	function renderSpendChart(el, series) {
+	function renderTrendChart(el, series) {
 		if (!el) return;
 		el.innerHTML = '';
-		if (!series.length) { el.innerHTML = `<div class="ce-empty">${esc(__('No spend data'))}</div>`; return; }
+		if (!series.length) { el.innerHTML = `<div class="ce-empty">${esc(__('No receipts yet'))}</div>`; return; }
 		try {
 			new frappe.Chart(el, {
-				type: 'line',
+				type: 'bar',
 				colors: [BRAND_PALETTE.primary],
 				height: 260,
-				lineOptions: { regionFill: 1 },
 				axisOptions: { xAxisMode: 'tick' },
-				data: { labels: series.map(p => p.label), datasets: [{ name: __('Spend'), values: series.map(p => p.value || 0) }] },
+				barOptions: { spaceRatio: 0.4 },
+				data: { labels: series.map(p => p.label), datasets: [{ name: __('Receipts'), values: series.map(p => p.value || 0) }] },
 			});
 		} catch (e) {
 			log('chart render failed', e);
@@ -290,7 +290,7 @@
 			<a class="ce-row" href="/app/supplier/${encodeURIComponent(s.name)}">
 				<div class="ce-row-main">
 					<div class="ce-row-title">${esc(s.supplier_name || s.name)}</div>
-					<div class="ce-row-sub">${esc(s.supplier_group || '')}</div>
+					<div class="ce-row-sub">${esc(s.supplier_group || '')} · ${Number(s.order_count || 0)} ${esc(__('orders'))}</div>
 				</div>
 				<div class="ce-row-side">
 					<div class="ce-amount">${fmtMoney(s.spend)}</div>
@@ -298,37 +298,37 @@
 			</a>`;
 	}
 
-	function openPORow(o) {
+	function openSCORow(o) {
 		return `
-			<a class="ce-row" href="/app/purchase-order/${encodeURIComponent(o.name)}">
+			<a class="ce-row" href="/app/subcontracting-order/${encodeURIComponent(o.name)}">
 				<div class="ce-row-main">
 					<div class="ce-row-title">${esc(o.name)}</div>
 					<div class="ce-row-sub">${esc(o.supplier_name || o.supplier || '')}</div>
 				</div>
 				<div class="ce-row-side">
-					<div class="ce-amount">${fmtMoney(o.grand_total)}</div>
+					<div class="ce-amount">${fmtMoney(o.total)}</div>
 					<div class="ce-row-sub">${esc(o.status || '')}</div>
 				</div>
 			</a>`;
 	}
 
-	function overdueRow(o) {
+	function receiptRow(r) {
 		return `
-			<a class="ce-row" href="/app/purchase-invoice/${encodeURIComponent(o.name)}">
+			<a class="ce-row" href="/app/subcontracting-receipt/${encodeURIComponent(r.name)}">
 				<div class="ce-row-main">
-					<div class="ce-row-title">${esc(o.name)}</div>
-					<div class="ce-row-sub">${esc(o.supplier_name || o.supplier || '')}</div>
+					<div class="ce-row-title">${esc(r.name)}</div>
+					<div class="ce-row-sub">${esc(r.supplier_name || r.supplier || '')}</div>
 				</div>
 				<div class="ce-row-side">
-					<div class="ce-amount">${fmtMoney(o.outstanding_amount)}</div>
-					<div class="ce-row-sub">${esc(o.due_date || '')}</div>
+					<div class="ce-amount">${fmtMoney(r.total)}</div>
+					<div class="ce-row-sub">${esc(r.posting_date || '')}</div>
 				</div>
 			</a>`;
 	}
 
 	function tick() {
-		const want = isBuyingPath();
-		log('tick: isBuyingPath =', want, 'mounted =', mounted);
+		const want = isSubcontractingPath();
+		log('tick: isSubcontractingPath =', want, 'mounted =', mounted);
 		if (want && !mounted) {
 			if (!mount()) { /* retry */ }
 		} else if (!want && mounted) {
@@ -341,7 +341,7 @@
 	function startObserver() {
 		if (observer) return;
 		observer = new MutationObserver(() => {
-			if (isBuyingPath() && !document.querySelector('.ce-buy-root')) {
+			if (isSubcontractingPath() && !document.querySelector('.ce-sub-root')) {
 				log('observer: workspace DOM changed, attempting mount');
 				mount();
 			}
@@ -353,7 +353,7 @@
 		if (window.frappe && frappe.router && typeof frappe.router.on === 'function') {
 			frappe.router.on('change', () => {
 				log('router change fired; route =', JSON.stringify(frappe.get_route()));
-				const want = isBuyingPath();
+				const want = isSubcontractingPath();
 				if (!want) { unmount(); }
 				else { mounted = false; tick(); }
 			});
@@ -382,7 +382,7 @@
 			attempts++;
 			if (attempts > 50) { clearInterval(retry); return; }
 			if (mounted) { clearInterval(retry); return; }
-			if (isBuyingPath()) tick();
+			if (isSubcontractingPath()) tick();
 		}, 200);
 	}
 

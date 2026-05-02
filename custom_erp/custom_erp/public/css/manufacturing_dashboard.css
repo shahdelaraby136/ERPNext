@@ -1,0 +1,33 @@
+/* ============================================================
+   Custom Manufacturing Dashboard — reuses .ce-theme-brand.
+   Owns the root container + body-class hide rules for /app/manufacturing.
+   ============================================================ */
+
+.ce-mfg-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-mfg {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-mfg-active .layout-main-section > *:not(.ce-mfg-root) { display: none !important; }
+body.ce-mfg-active .ce-mfg-root { display: block !important; }
+.layout-main-section:has(> .ce-mfg-root) > :not(.ce-mfg-root) { display: none !important; }
+
+body.ce-mfg-active .container.page-container,
+body.ce-mfg-active .page-container,
+body.ce-mfg-active .layout-main,
+body.ce-mfg-active .layout-main-section,
+body.ce-mfg-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-mfg-active .ds-container { max-width: 1600px !important; }

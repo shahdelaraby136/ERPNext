@@ -1,10 +1,10 @@
-/* Custom Buying Workspace Redesign — same brand theme as Selling
-   Hijacks /app/buying and renders Hero + KPIs + spend chart + lists.
-   Data comes from Server Script: buying_dashboard_data
+/* Custom Manufacturing Workspace Redesign — same brand theme as Selling
+   Hijacks /app/manufacturing and renders Hero + KPIs + Quick Actions + chart + lists.
+   Data comes from Server Script: manufacturing_dashboard_data
 */
 
 (function () {
-	const TAG = '[ce-buy]';
+	const TAG = '[ce-mfg]';
 	const log = (...a) => { try { console.log(TAG, ...a); } catch (e) {} };
 
 	log('script loaded');
@@ -15,19 +15,19 @@
 		accent:  '#3B82F6',
 	};
 
-	function isBuyingPath() {
+	function isMfgPath() {
 		try {
 			const r = (window.frappe && frappe.get_route && frappe.get_route()) || [];
 			const path = (window.location.pathname || '');
 			const hash = (window.location.hash || '');
 			for (let i = 0; i < Math.min(r.length, 3); i++) {
 				const seg = (r[i] || '').toString().toLowerCase();
-				if (seg === 'buying') return true;
+				if (seg === 'manufacturing') return true;
 			}
 			const p = path.toLowerCase();
-			if (p === '/app/buying' || p.startsWith('/app/buying/') || p.startsWith('/app/buying?')) return true;
+			if (p === '/app/manufacturing' || p.startsWith('/app/manufacturing/') || p.startsWith('/app/manufacturing?')) return true;
 			const h = hash.toLowerCase();
-			if (h.includes('/buying')) return true;
+			if (h.includes('/manufacturing')) return true;
 			return false;
 		} catch (e) { log('route check error', e); return false; }
 	}
@@ -51,7 +51,7 @@
 	}
 
 	function ensureBodyFlag(on) {
-		document.body.classList.toggle('ce-buy-active', !!on);
+		document.body.classList.toggle('ce-mfg-active', !!on);
 	}
 
 	function mount() {
@@ -62,10 +62,10 @@
 		const layout = document.querySelector('.layout-main-section');
 		if (!layout) return false;
 
-		let root = layout.querySelector(':scope > .ce-buy-root');
+		let root = layout.querySelector(':scope > .ce-mfg-root');
 		if (!root) {
 			root = document.createElement('div');
-			root.className = 'ce-buy-root ce-theme-brand';
+			root.className = 'ce-mfg-root ce-theme-brand';
 			layout.insertBefore(root, layout.firstChild);
 		}
 		ensureBodyFlag(true);
@@ -77,7 +77,7 @@
 	function unmount() {
 		mounted = false;
 		ensureBodyFlag(false);
-		document.querySelectorAll('.ce-buy-root').forEach(n => n.remove());
+		document.querySelectorAll('.ce-mfg-root').forEach(n => n.remove());
 		log('unmounted');
 	}
 
@@ -89,19 +89,19 @@
 			|| (window.frappe && frappe.session && frappe.session.user) || '';
 
 		root.innerHTML = `
-			<div class="ce-hero ce-hero-buy">
+			<div class="ce-hero ce-hero-mfg">
 				<div class="ds-container">
 					<div class="ce-hero-inner">
 						<div class="ce-hero-text">
-							<div class="ce-hero-eyebrow">${esc(__('Buying'))}</div>
-							<h1 class="ce-hero-title">${esc(__('Procurement Command Center'))}</h1>
+							<div class="ce-hero-eyebrow">${esc(__('Manufacturing'))}</div>
+							<h1 class="ce-hero-title">${esc(__('Manufacturing Command Center'))}</h1>
 							<div class="ce-hero-sub">${esc(__('Welcome'))}, ${esc(fullName)} · ${esc(today)}</div>
 						</div>
 						<div class="ce-hero-actions">
-							<button class="btn ce-hero-btn" data-action="new-po">📦 ${esc(__('Purchase Order'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-pi">🧾 ${esc(__('Purchase Invoice'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-supplier">🏭 ${esc(__('Supplier'))}</button>
-							<button class="btn ce-hero-btn" data-action="new-mr">📝 ${esc(__('Material Request'))}</button>
+							<button class="btn ce-hero-btn" data-action="new-wo">⚙️ ${esc(__('Work Order'))}</button>
+							<button class="btn ce-hero-btn" data-action="new-bom">🔧 ${esc(__('BOM'))}</button>
+							<button class="btn ce-hero-btn" data-action="new-pp">📋 ${esc(__('Production Plan'))}</button>
+							<button class="btn ce-hero-btn" data-action="new-jc">🛠️ ${esc(__('Job Card'))}</button>
 						</div>
 					</div>
 				</div>
@@ -109,32 +109,32 @@
 
 			<div class="ds-container">
 				<section class="ds-section--md">
-					<div class="ce-section-head">${esc(__('Procurement pulse'))}</div>
-					<div class="ds-grid" id="ce-buy-stats">
+					<div class="ce-section-head">${esc(__('Production pulse'))}</div>
+					<div class="ds-grid" id="ce-mfg-stats">
 						${[1,2,3,4].map(()=>'<div class="ds-col-3 ce-card ce-skeleton-card"></div>').join('')}
 					</div>
 				</section>
 
 				<section class="ds-section--md">
 					<div class="ce-section-head">${esc(__('Quick actions'))}</div>
-					<div class="ds-grid" id="ce-buy-quick"></div>
+					<div class="ds-grid" id="ce-mfg-quick"></div>
 				</section>
 
 				<section class="ds-section--md">
 					<div class="ds-grid">
 						<div class="ds-col-8 ce-panel ce-panel-tall">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Spend — last 12 months'))}</div>
-								<a class="ce-panel-link" href="/app/purchase-invoice">${esc(__('Invoices'))} →</a>
+								<div class="ce-panel-title">${esc(__('Completed Work Orders — last 12 months'))}</div>
+								<a class="ce-panel-link" href="/app/work-order">${esc(__('Work Orders'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-buy-spend-chart" style="min-height:260px;"></div>
+							<div class="ce-panel-body" id="ce-mfg-trend-chart" style="min-height:260px;"></div>
 						</div>
 						<div class="ds-col-4 ce-panel ce-panel-tall">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Top suppliers (last 12 months)'))}</div>
-								<a class="ce-panel-link" href="/app/supplier">${esc(__('All suppliers'))} →</a>
+								<div class="ce-panel-title">${esc(__('Top items produced (12 mo)'))}</div>
+								<a class="ce-panel-link" href="/app/item">${esc(__('All items'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-buy-top-suppliers">
+							<div class="ce-panel-body" id="ce-mfg-top-items">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
@@ -145,19 +145,19 @@
 					<div class="ds-grid">
 						<div class="ds-col-6 ce-panel">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Open purchase orders'))}</div>
-								<a class="ce-panel-link" href="/app/purchase-order">${esc(__('View all'))} →</a>
+								<div class="ce-panel-title">${esc(__('Open work orders'))}</div>
+								<a class="ce-panel-link" href="/app/work-order">${esc(__('View all'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-buy-open-po">
+							<div class="ce-panel-body" id="ce-mfg-open-wo">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
 						<div class="ds-col-6 ce-panel">
 							<div class="ce-panel-head">
-								<div class="ce-panel-title">${esc(__('Overdue invoices'))}</div>
-								<a class="ce-panel-link" href="/app/purchase-invoice?status=Overdue">${esc(__('View all'))} →</a>
+								<div class="ce-panel-title">${esc(__('Open job cards'))}</div>
+								<a class="ce-panel-link" href="/app/job-card">${esc(__('View all'))} →</a>
 							</div>
-							<div class="ce-panel-body" id="ce-buy-overdue">
+							<div class="ce-panel-body" id="ce-mfg-open-jc">
 								<div class="ce-skeleton"></div><div class="ce-skeleton"></div>
 							</div>
 						</div>
@@ -167,7 +167,7 @@
 		`;
 
 		bindActions(root);
-		renderQuickActions(root.querySelector('#ce-buy-quick'));
+		renderQuickActions(root.querySelector('#ce-mfg-quick'));
 		loadData(root);
 	}
 
@@ -181,10 +181,10 @@
 	function bindActions(root) {
 		const newDoc = (dt) => () => frappe.new_doc(dt);
 		const map = {
-			'new-po':       newDoc('Purchase Order'),
-			'new-pi':       newDoc('Purchase Invoice'),
-			'new-supplier': newDoc('Supplier'),
-			'new-mr':       newDoc('Material Request'),
+			'new-wo':  newDoc('Work Order'),
+			'new-bom': newDoc('BOM'),
+			'new-pp':  newDoc('Production Plan'),
+			'new-jc':  newDoc('Job Card'),
 		};
 		root.querySelectorAll('[data-action]').forEach(b => {
 			b.addEventListener('click', () => { const a = b.dataset.action; if (map[a]) map[a](); });
@@ -194,14 +194,14 @@
 	function renderQuickActions(host) {
 		if (!host) return;
 		const items = [
-			{ label: __('New Purchase Order'),       icon: '📦', href: '/app/purchase-order/new' },
-			{ label: __('New Purchase Invoice'),     icon: '🧾', href: '/app/purchase-invoice/new' },
-			{ label: __('New Supplier'),             icon: '🏭', href: '/app/supplier/new' },
-			{ label: __('New Material Request'),     icon: '📝', href: '/app/material-request/new' },
-			{ label: __('Request for Quotation'),    icon: '✉️', href: '/app/request-for-quotation' },
-			{ label: __('Supplier Quotation'),       icon: '💬', href: '/app/supplier-quotation' },
-			{ label: __('Items'),                    icon: '🏷️', href: '/app/item' },
-			{ label: __('Purchase Analytics'),       icon: '📊', href: '/app/query-report/Purchase Analytics' },
+			{ label: __('New Work Order'),     icon: '⚙️', href: '/app/work-order/new' },
+			{ label: __('New BOM'),            icon: '🔧', href: '/app/bom/new' },
+			{ label: __('New Production Plan'),icon: '📋', href: '/app/production-plan/new' },
+			{ label: __('New Job Card'),       icon: '🛠️', href: '/app/job-card/new' },
+			{ label: __('Workstations'),       icon: '🏭', href: '/app/workstation' },
+			{ label: __('Operations'),         icon: '🔩', href: '/app/operation' },
+			{ label: __('Production Planning'),icon: '📊', href: '/app/query-report/Production Analytics' },
+			{ label: __('Work Orders'),        icon: '📂', href: '/app/work-order' },
 		];
 		host.innerHTML = items.map(i => `
 			<a class="ds-col-3 ce-quick ce-quick-rose" href="${i.href}">
@@ -211,30 +211,29 @@
 		`).join('');
 	}
 
-	function fmtMoney(v, currency) {
-		try {
-			if (typeof format_currency === 'function') return format_currency(v || 0, currency);
-			return String(frappe.format(v || 0, { fieldtype: 'Currency' })).replace(/<[^>]+>/g, '');
-		} catch (e) { return (v || 0).toLocaleString(); }
+	function fmtNumber(v) {
+		const n = Number(v || 0);
+		if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+		return Math.round(n).toLocaleString();
 	}
 
 	function loadData(root) {
-		log('loading data from server script: buying_dashboard_data');
+		log('loading data from server script: manufacturing_dashboard_data');
 		frappe.call({
-			method: 'buying_dashboard_data',
+			method: 'manufacturing_dashboard_data',
 			callback: (r) => {
 				log('server script response:', r);
 				const data = (r && r.message) || {};
-				renderStats(root.querySelector('#ce-buy-stats'), data.stats || {});
-				renderSpendChart(root.querySelector('#ce-buy-spend-chart'), data.spend_series || []);
-				renderRows(root.querySelector('#ce-buy-top-suppliers'), data.top_suppliers || [],       topSupplierRow, __('No supplier spend yet'));
-				renderRows(root.querySelector('#ce-buy-open-po'),        data.open_purchase_orders || [], openPORow,      __('No open purchase orders'));
-				renderRows(root.querySelector('#ce-buy-overdue'),        data.overdue_invoices || [],     overdueRow,     __('No overdue invoices'));
+				renderStats(root.querySelector('#ce-mfg-stats'), data.stats || {});
+				renderTrendChart(root.querySelector('#ce-mfg-trend-chart'), data.completed_series || []);
+				renderRows(root.querySelector('#ce-mfg-top-items'), data.top_items || [],         topItemRow,  __('No production yet'));
+				renderRows(root.querySelector('#ce-mfg-open-wo'),   data.open_work_orders || [],  openWORow,   __('No open work orders'));
+				renderRows(root.querySelector('#ce-mfg-open-jc'),   data.open_job_cards || [],    openJCRow,   __('No open job cards'));
 			},
 			error: (e) => {
 				log('server script call failed:', e);
-				const stats = root.querySelector('#ce-buy-stats');
-				if (stats) stats.innerHTML = `<div class="ce-empty">${esc(__('Could not load dashboard data — make sure Server Script "buying_dashboard_data" is enabled.'))}</div>`;
+				const stats = root.querySelector('#ce-mfg-stats');
+				if (stats) stats.innerHTML = `<div class="ce-empty">${esc(__('Could not load dashboard data — make sure Server Script "manufacturing_dashboard_data" is enabled.'))}</div>`;
 			},
 		});
 	}
@@ -242,10 +241,10 @@
 	function renderStats(host, s) {
 		if (!host) return;
 		const cards = [
-			{ label: __('Spend (this month)'), value: fmtMoney(s.spend_month), delta: s.spend_delta_pct, icon: '💰' },
-			{ label: __('Open POs'),           value: (s.open_po_count || 0),  sub: fmtMoney(s.open_po_value), icon: '📦' },
-			{ label: __('Overdue invoices'),   value: (s.overdue_count || 0),  sub: fmtMoney(s.overdue_value), icon: '⚠️' },
-			{ label: __('Active suppliers'),   value: (s.total_suppliers || 0), icon: '🏭' },
+			{ label: __('Open Work Orders'),       value: (s.open_wo_count || 0), sub: fmtNumber(s.open_wo_pending_qty) + ' ' + __('pending qty'), icon: '⚙️' },
+			{ label: __('Active BOMs'),            value: (s.active_boms || 0),                                       icon: '🔧' },
+			{ label: __('Open Job Cards'),         value: (s.open_jc || 0),                                            icon: '🛠️' },
+			{ label: __('Completed (this month)'), value: (s.completed_month || 0), delta: s.completed_delta_pct,      icon: '✅' },
 		];
 		host.innerHTML = cards.map(c => `
 			<div class="ds-col-3 ce-card ce-card-brand">
@@ -260,18 +259,18 @@
 		`).join('');
 	}
 
-	function renderSpendChart(el, series) {
+	function renderTrendChart(el, series) {
 		if (!el) return;
 		el.innerHTML = '';
-		if (!series.length) { el.innerHTML = `<div class="ce-empty">${esc(__('No spend data'))}</div>`; return; }
+		if (!series.length) { el.innerHTML = `<div class="ce-empty">${esc(__('No production data'))}</div>`; return; }
 		try {
 			new frappe.Chart(el, {
-				type: 'line',
+				type: 'bar',
 				colors: [BRAND_PALETTE.primary],
 				height: 260,
-				lineOptions: { regionFill: 1 },
 				axisOptions: { xAxisMode: 'tick' },
-				data: { labels: series.map(p => p.label), datasets: [{ name: __('Spend'), values: series.map(p => p.value || 0) }] },
+				barOptions: { spaceRatio: 0.4 },
+				data: { labels: series.map(p => p.label), datasets: [{ name: __('Completed WOs'), values: series.map(p => p.value || 0) }] },
 			});
 		} catch (e) {
 			log('chart render failed', e);
@@ -285,50 +284,55 @@
 		host.innerHTML = items.map(rowFn).join('');
 	}
 
-	function topSupplierRow(s) {
+	function topItemRow(it) {
+		const planned = Number(it.planned_qty || 0);
+		const produced = Number(it.produced_qty || 0);
 		return `
-			<a class="ce-row" href="/app/supplier/${encodeURIComponent(s.name)}">
+			<a class="ce-row" href="/app/item/${encodeURIComponent(it.name)}">
 				<div class="ce-row-main">
-					<div class="ce-row-title">${esc(s.supplier_name || s.name)}</div>
-					<div class="ce-row-sub">${esc(s.supplier_group || '')}</div>
+					<div class="ce-row-title">${esc(it.item_name || it.name)}</div>
+					<div class="ce-row-sub">${esc(it.item_group || '')} · ${Number(it.order_count || 0)} ${esc(__('WOs'))}</div>
 				</div>
 				<div class="ce-row-side">
-					<div class="ce-amount">${fmtMoney(s.spend)}</div>
+					<div class="ce-amount">${fmtNumber(produced)} / ${fmtNumber(planned)}</div>
 				</div>
 			</a>`;
 	}
 
-	function openPORow(o) {
+	function openWORow(w) {
+		const planned = Number(w.qty || 0);
+		const produced = Number(w.produced_qty || 0);
+		const pct = planned > 0 ? Math.round((produced / planned) * 100) : 0;
 		return `
-			<a class="ce-row" href="/app/purchase-order/${encodeURIComponent(o.name)}">
+			<a class="ce-row" href="/app/work-order/${encodeURIComponent(w.name)}">
 				<div class="ce-row-main">
-					<div class="ce-row-title">${esc(o.name)}</div>
-					<div class="ce-row-sub">${esc(o.supplier_name || o.supplier || '')}</div>
+					<div class="ce-row-title">${esc(w.production_item || w.name)}</div>
+					<div class="ce-row-sub">${esc(w.name)} · ${esc(w.status || '')}</div>
 				</div>
 				<div class="ce-row-side">
-					<div class="ce-amount">${fmtMoney(o.grand_total)}</div>
-					<div class="ce-row-sub">${esc(o.status || '')}</div>
+					<div class="ce-amount">${pct}%</div>
+					<div class="ce-row-sub">${esc(w.planned_end_date || '')}</div>
 				</div>
 			</a>`;
 	}
 
-	function overdueRow(o) {
+	function openJCRow(j) {
 		return `
-			<a class="ce-row" href="/app/purchase-invoice/${encodeURIComponent(o.name)}">
+			<a class="ce-row" href="/app/job-card/${encodeURIComponent(j.name)}">
 				<div class="ce-row-main">
-					<div class="ce-row-title">${esc(o.name)}</div>
-					<div class="ce-row-sub">${esc(o.supplier_name || o.supplier || '')}</div>
+					<div class="ce-row-title">${esc(j.production_item || j.name)}</div>
+					<div class="ce-row-sub">${esc(j.operation || '')} · ${esc(j.workstation || '')}</div>
 				</div>
 				<div class="ce-row-side">
-					<div class="ce-amount">${fmtMoney(o.outstanding_amount)}</div>
-					<div class="ce-row-sub">${esc(o.due_date || '')}</div>
+					<div class="ce-amount">${esc(j.status || '')}</div>
+					<div class="ce-row-sub">${esc(j.expected_end_date || '')}</div>
 				</div>
 			</a>`;
 	}
 
 	function tick() {
-		const want = isBuyingPath();
-		log('tick: isBuyingPath =', want, 'mounted =', mounted);
+		const want = isMfgPath();
+		log('tick: isMfgPath =', want, 'mounted =', mounted);
 		if (want && !mounted) {
 			if (!mount()) { /* retry */ }
 		} else if (!want && mounted) {
@@ -341,7 +345,7 @@
 	function startObserver() {
 		if (observer) return;
 		observer = new MutationObserver(() => {
-			if (isBuyingPath() && !document.querySelector('.ce-buy-root')) {
+			if (isMfgPath() && !document.querySelector('.ce-mfg-root')) {
 				log('observer: workspace DOM changed, attempting mount');
 				mount();
 			}
@@ -353,7 +357,7 @@
 		if (window.frappe && frappe.router && typeof frappe.router.on === 'function') {
 			frappe.router.on('change', () => {
 				log('router change fired; route =', JSON.stringify(frappe.get_route()));
-				const want = isBuyingPath();
+				const want = isMfgPath();
 				if (!want) { unmount(); }
 				else { mounted = false; tick(); }
 			});
@@ -382,7 +386,7 @@
 			attempts++;
 			if (attempts > 50) { clearInterval(retry); return; }
 			if (mounted) { clearInterval(retry); return; }
-			if (isBuyingPath()) tick();
+			if (isMfgPath()) tick();
 		}, 200);
 	}
 

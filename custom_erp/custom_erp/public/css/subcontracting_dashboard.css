@@ -1,0 +1,34 @@
+/* ============================================================
+   Custom Subcontracting Dashboard — reuses .ce-theme-brand from
+   selling_dashboard.css. Owns the root container + body-class
+   hide rules for /app/subcontracting.
+   ============================================================ */
+
+.ce-sub-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-sub {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-sub-active .layout-main-section > *:not(.ce-sub-root) { display: none !important; }
+body.ce-sub-active .ce-sub-root { display: block !important; }
+.layout-main-section:has(> .ce-sub-root) > :not(.ce-sub-root) { display: none !important; }
+
+body.ce-sub-active .container.page-container,
+body.ce-sub-active .page-container,
+body.ce-sub-active .layout-main,
+body.ce-sub-active .layout-main-section,
+body.ce-sub-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-sub-active .ds-container { max-width: 1600px !important; }

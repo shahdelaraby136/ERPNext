@@ -1,0 +1,34 @@
+/* ============================================================
+   Custom Stock Dashboard — reuses .ce-theme-brand from
+   selling_dashboard.css. Owns the root container + body-class
+   hide rules for /app/stock.
+   ============================================================ */
+
+.ce-stock-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-stock {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-stock-active .layout-main-section > *:not(.ce-stock-root) { display: none !important; }
+body.ce-stock-active .ce-stock-root { display: block !important; }
+.layout-main-section:has(> .ce-stock-root) > :not(.ce-stock-root) { display: none !important; }
+
+body.ce-stock-active .container.page-container,
+body.ce-stock-active .page-container,
+body.ce-stock-active .layout-main,
+body.ce-stock-active .layout-main-section,
+body.ce-stock-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-stock-active .ds-container { max-width: 1600px !important; }

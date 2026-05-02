@@ -116,6 +116,11 @@
 				</section>
 
 				<section class="ds-section--md">
+					<div class="ce-section-head">${esc(__('Quick actions'))}</div>
+					<div class="ds-grid" id="ce-proj-quick"></div>
+				</section>
+
+				<section class="ds-section--md">
 					<div class="ds-grid">
 						<div class="ds-col-8 ce-panel ce-panel-tall">
 							<div class="ce-panel-head">
@@ -134,11 +139,6 @@
 							</div>
 						</div>
 					</div>
-				</section>
-
-				<section class="ds-section--md">
-					<div class="ce-section-head">${esc(__('Quick actions'))}</div>
-					<div class="ds-grid" id="ce-proj-quick"></div>
 				</section>
 
 				<section class="ds-section--md">

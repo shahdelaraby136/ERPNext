@@ -346,6 +346,523 @@ frappe.response["message"] = {
 '''
 
 
+QUALITY_DASHBOARD_SCRIPT = r'''
+# Server Script - Type: API
+# Returns aggregated metrics for the custom Quality dashboard.
+# Sandbox-safe: only frappe.* APIs (no `import`, no built-in `float`).
+
+today = frappe.utils.today()
+month_start = frappe.utils.get_first_day(today)
+last_month_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -1))
+last_month_end = frappe.utils.get_last_day(frappe.utils.add_months(today, -1))
+twelve_months_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -11))
+
+def to_flt(v):
+    return frappe.utils.flt(v or 0)
+
+# ---- Inspections this month ----
+inspections_month = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabQuality Inspection`
+    WHERE docstatus < 2
+      AND report_date BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0].cnt
+
+inspections_last = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabQuality Inspection`
+    WHERE docstatus < 2
+      AND report_date BETWEEN %(s)s AND %(e)s
+""", {"s": last_month_start, "e": last_month_end}, as_dict=True)[0].cnt
+
+inspections_delta_pct = None
+if to_flt(inspections_last) > 0:
+    inspections_delta_pct = ((to_flt(inspections_month) - to_flt(inspections_last)) / to_flt(inspections_last)) * 100.0
+
+# ---- Rejected inspections (last 12 months) ----
+rejected_count = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabQuality Inspection`
+    WHERE docstatus < 2
+      AND status = 'Rejected'
+      AND report_date >= %(s)s
+""", {"s": twelve_months_start}, as_dict=True)[0].cnt
+
+# ---- Open Non Conformances ----
+open_nc_count = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabNon Conformance`
+    WHERE docstatus < 2
+      AND COALESCE(status, '') NOT IN ('Closed', 'Cancelled', 'Resolved')
+""", as_dict=True)[0].cnt
+
+# ---- Open Quality Actions ----
+open_actions_count = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabQuality Action`
+    WHERE docstatus < 2
+      AND COALESCE(status, '') NOT IN ('Completed', 'Closed', 'Cancelled')
+""", as_dict=True)[0].cnt
+
+# ---- Inspection trend (last 12 months) ----
+series_rows = frappe.db.sql("""
+    SELECT DATE_FORMAT(report_date, %(fmt)s) AS m,
+           COUNT(*) AS total
+    FROM `tabQuality Inspection`
+    WHERE docstatus < 2
+      AND report_date >= %(s)s
+    GROUP BY DATE_FORMAT(report_date, %(grp)s)
+    ORDER BY m
+""", {"s": twelve_months_start, "fmt": "%Y-%m-01", "grp": "%Y-%m"}, as_dict=True)
+
+series = []
+cursor = twelve_months_start
+by_month = {row.m: to_flt(row.total) for row in series_rows}
+for i in range(12):
+    key = frappe.utils.formatdate(cursor, "yyyy-MM-01")
+    label = frappe.utils.formatdate(cursor, "MMM yy")
+    series.append({"label": label, "value": by_month.get(key, 0)})
+    cursor = frappe.utils.add_months(cursor, 1)
+
+# ---- Recent inspections ----
+recent_inspections = frappe.db.sql("""
+    SELECT name, item_code, item_name, status, inspection_type, report_date
+    FROM `tabQuality Inspection`
+    WHERE docstatus < 2
+    ORDER BY modified DESC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Open Non Conformances ----
+# `procedure` is a MariaDB reserved word — must be backtick-quoted.
+open_non_conformances = frappe.db.sql("""
+    SELECT name, `procedure` AS procedure_name, status, full_name, modified
+    FROM `tabNon Conformance`
+    WHERE docstatus < 2
+      AND COALESCE(status, '') NOT IN ('Closed', 'Cancelled', 'Resolved')
+    ORDER BY modified DESC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Open Quality Actions ----
+open_actions = frappe.db.sql("""
+    SELECT name, `procedure` AS procedure_name, status, `date` AS action_date
+    FROM `tabQuality Action`
+    WHERE docstatus < 2
+      AND COALESCE(status, '') NOT IN ('Completed', 'Closed', 'Cancelled')
+    ORDER BY
+      CASE WHEN `date` IS NULL THEN 1 ELSE 0 END,
+      `date` ASC
+    LIMIT 6
+""", as_dict=True)
+
+frappe.response["message"] = {
+    "stats": {
+        "inspections_month": inspections_month or 0,
+        "inspections_last": inspections_last or 0,
+        "inspections_delta_pct": inspections_delta_pct,
+        "rejected_count": rejected_count or 0,
+        "open_nc_count": open_nc_count or 0,
+        "open_actions_count": open_actions_count or 0,
+    },
+    "inspection_series": series,
+    "recent_inspections": recent_inspections,
+    "open_non_conformances": open_non_conformances,
+    "open_actions": open_actions,
+}
+'''
+
+
+STOCK_DASHBOARD_SCRIPT = r'''
+# Server Script - Type: API
+# Returns aggregated metrics for the custom Stock dashboard.
+# Sandbox-safe: only frappe.* APIs (no `import`, no built-in `float`).
+
+today = frappe.utils.today()
+month_start = frappe.utils.get_first_day(today)
+last_month_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -1))
+last_month_end = frappe.utils.get_last_day(frappe.utils.add_months(today, -1))
+twelve_months_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -11))
+
+def to_flt(v):
+    return frappe.utils.flt(v or 0)
+
+# ---- Inventory value (SUM of tabBin.stock_value across all warehouses) ----
+inv_row = frappe.db.sql("""
+    SELECT COALESCE(SUM(stock_value), 0) AS total
+    FROM `tabBin`
+""", as_dict=True)[0]
+inventory_value = to_flt(inv_row.total)
+
+# ---- Stock item count ----
+stock_items = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabItem`
+    WHERE is_stock_item = 1 AND disabled = 0
+""", as_dict=True)[0].cnt
+
+# ---- Pending material requests ----
+pending_mr = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabMaterial Request`
+    WHERE docstatus = 1
+      AND COALESCE(status, '') NOT IN ('Stopped', 'Cancelled', 'Received', 'Issued', 'Transferred')
+""", as_dict=True)[0].cnt
+
+# ---- Stock entries (this month / last month) ----
+se_month = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabStock Entry`
+    WHERE docstatus = 1
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0].cnt
+
+se_last = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabStock Entry`
+    WHERE docstatus = 1
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": last_month_start, "e": last_month_end}, as_dict=True)[0].cnt
+
+se_delta_pct = None
+if to_flt(se_last) > 0:
+    se_delta_pct = ((to_flt(se_month) - to_flt(se_last)) / to_flt(se_last)) * 100.0
+
+# ---- Stock entries trend (last 12 months) ----
+series_rows = frappe.db.sql("""
+    SELECT DATE_FORMAT(posting_date, %(fmt)s) AS m,
+           COUNT(*) AS total
+    FROM `tabStock Entry`
+    WHERE docstatus = 1
+      AND posting_date >= %(s)s
+    GROUP BY DATE_FORMAT(posting_date, %(grp)s)
+    ORDER BY m
+""", {"s": twelve_months_start, "fmt": "%Y-%m-01", "grp": "%Y-%m"}, as_dict=True)
+
+series = []
+cursor = twelve_months_start
+by_month = {row.m: to_flt(row.total) for row in series_rows}
+for i in range(12):
+    key = frappe.utils.formatdate(cursor, "yyyy-MM-01")
+    label = frappe.utils.formatdate(cursor, "MMM yy")
+    series.append({"label": label, "value": by_month.get(key, 0)})
+    cursor = frappe.utils.add_months(cursor, 1)
+
+# ---- Top warehouses by stock value ----
+top_warehouses = frappe.db.sql("""
+    SELECT b.warehouse AS name,
+           COALESCE(w.warehouse_name, b.warehouse) AS warehouse_name,
+           w.company AS company,
+           COALESCE(SUM(b.stock_value), 0) AS stock_value,
+           COUNT(DISTINCT b.item_code) AS item_count
+    FROM `tabBin` b
+    LEFT JOIN `tabWarehouse` w ON w.name = b.warehouse
+    WHERE COALESCE(w.disabled, 0) = 0
+    GROUP BY b.warehouse
+    HAVING stock_value > 0 OR item_count > 0
+    ORDER BY stock_value DESC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Pending material requests (list) ----
+pending_mr_rows = frappe.db.sql("""
+    SELECT name, material_request_type, status, transaction_date, schedule_date, company
+    FROM `tabMaterial Request`
+    WHERE docstatus = 1
+      AND COALESCE(status, '') NOT IN ('Stopped', 'Cancelled', 'Received', 'Issued', 'Transferred')
+    ORDER BY
+      CASE WHEN schedule_date IS NULL THEN 1 ELSE 0 END,
+      schedule_date ASC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Recent stock entries ----
+recent_stock_entries = frappe.db.sql("""
+    SELECT name, stock_entry_type, purpose, posting_date, company
+    FROM `tabStock Entry`
+    WHERE docstatus < 2
+    ORDER BY modified DESC
+    LIMIT 6
+""", as_dict=True)
+
+frappe.response["message"] = {
+    "stats": {
+        "inventory_value": inventory_value,
+        "stock_items": stock_items or 0,
+        "pending_mr": pending_mr or 0,
+        "se_month": se_month or 0,
+        "se_last": se_last or 0,
+        "se_delta_pct": se_delta_pct,
+    },
+    "stock_entry_series": series,
+    "top_warehouses": top_warehouses,
+    "pending_material_requests": pending_mr_rows,
+    "recent_stock_entries": recent_stock_entries,
+}
+'''
+
+
+SUBCONTRACTING_DASHBOARD_SCRIPT = r'''
+# Server Script - Type: API
+# Returns aggregated metrics for the custom Subcontracting dashboard.
+# Sandbox-safe: only frappe.* APIs (no `import`, no built-in `float`).
+
+today = frappe.utils.today()
+month_start = frappe.utils.get_first_day(today)
+last_month_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -1))
+last_month_end = frappe.utils.get_last_day(frappe.utils.add_months(today, -1))
+twelve_months_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -11))
+
+def to_flt(v):
+    return frappe.utils.flt(v or 0)
+
+# ---- Open Subcontracting Orders (count + total value) ----
+open_sco = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt, COALESCE(SUM(total), 0) AS total
+    FROM `tabSubcontracting Order`
+    WHERE docstatus = 1
+      AND COALESCE(status, '') NOT IN ('Closed', 'Completed', 'Cancelled', 'Delivered')
+""", as_dict=True)[0]
+
+# ---- Receipts (this month / last month) ----
+sr_month = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt, COALESCE(SUM(total), 0) AS total
+    FROM `tabSubcontracting Receipt`
+    WHERE docstatus = 1
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0]
+
+sr_last = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabSubcontracting Receipt`
+    WHERE docstatus = 1
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": last_month_start, "e": last_month_end}, as_dict=True)[0]
+
+sr_delta_pct = None
+if to_flt(sr_last.cnt) > 0:
+    sr_delta_pct = ((to_flt(sr_month.cnt) - to_flt(sr_last.cnt)) / to_flt(sr_last.cnt)) * 100.0
+
+# ---- Active Subcontracting BOMs ----
+active_boms = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabSubcontracting BOM`
+    WHERE COALESCE(is_active, 1) = 1
+""", as_dict=True)[0].cnt
+
+# ---- Receipts trend (last 12 months, count) ----
+series_rows = frappe.db.sql("""
+    SELECT DATE_FORMAT(posting_date, %(fmt)s) AS m,
+           COUNT(*) AS total
+    FROM `tabSubcontracting Receipt`
+    WHERE docstatus = 1
+      AND posting_date >= %(s)s
+    GROUP BY DATE_FORMAT(posting_date, %(grp)s)
+    ORDER BY m
+""", {"s": twelve_months_start, "fmt": "%Y-%m-01", "grp": "%Y-%m"}, as_dict=True)
+
+series = []
+cursor = twelve_months_start
+by_month = {row.m: to_flt(row.total) for row in series_rows}
+for i in range(12):
+    key = frappe.utils.formatdate(cursor, "yyyy-MM-01")
+    label = frappe.utils.formatdate(cursor, "MMM yy")
+    series.append({"label": label, "value": by_month.get(key, 0)})
+    cursor = frappe.utils.add_months(cursor, 1)
+
+# ---- Top subcontract suppliers (last 12 months, by SCO total) ----
+top_suppliers = frappe.db.sql("""
+    SELECT sco.supplier AS name,
+           COALESCE(s.supplier_name, sco.supplier) AS supplier_name,
+           s.supplier_group AS supplier_group,
+           COALESCE(SUM(sco.total), 0) AS spend,
+           COUNT(*) AS order_count
+    FROM `tabSubcontracting Order` sco
+    LEFT JOIN `tabSupplier` s ON s.name = sco.supplier
+    WHERE sco.docstatus = 1
+      AND sco.transaction_date >= %(s)s
+    GROUP BY sco.supplier
+    ORDER BY spend DESC
+    LIMIT 6
+""", {"s": twelve_months_start}, as_dict=True)
+
+# ---- Open Subcontracting Orders (list) ----
+open_subcontracting_orders = frappe.db.sql("""
+    SELECT name, supplier, supplier_name, status, total, transaction_date, schedule_date
+    FROM `tabSubcontracting Order`
+    WHERE docstatus = 1
+      AND COALESCE(status, '') NOT IN ('Closed', 'Completed', 'Cancelled', 'Delivered')
+    ORDER BY total DESC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Recent receipts ----
+recent_receipts = frappe.db.sql("""
+    SELECT name, supplier, supplier_name, total, total_qty, posting_date
+    FROM `tabSubcontracting Receipt`
+    WHERE docstatus = 1
+    ORDER BY posting_date DESC, modified DESC
+    LIMIT 6
+""", as_dict=True)
+
+frappe.response["message"] = {
+    "stats": {
+        "open_sco_count": open_sco.cnt or 0,
+        "open_sco_value": to_flt(open_sco.total),
+        "receipts_month": sr_month.cnt or 0,
+        "receipts_value_month": to_flt(sr_month.total),
+        "receipts_last": sr_last.cnt or 0,
+        "receipts_delta_pct": sr_delta_pct,
+        "active_boms": active_boms or 0,
+    },
+    "receipts_series": series,
+    "top_suppliers": top_suppliers,
+    "open_subcontracting_orders": open_subcontracting_orders,
+    "recent_receipts": recent_receipts,
+}
+'''
+
+
+MANUFACTURING_DASHBOARD_SCRIPT = r'''
+# Server Script - Type: API
+# Returns aggregated metrics for the custom Manufacturing dashboard.
+# Sandbox-safe: only frappe.* APIs (no `import`, no built-in `float`).
+
+today = frappe.utils.today()
+month_start = frappe.utils.get_first_day(today)
+last_month_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -1))
+last_month_end = frappe.utils.get_last_day(frappe.utils.add_months(today, -1))
+twelve_months_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -11))
+
+def to_flt(v):
+    return frappe.utils.flt(v or 0)
+
+# ---- Open Work Orders (count + total qty) ----
+open_wo = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt, COALESCE(SUM(qty - produced_qty), 0) AS pending_qty
+    FROM `tabWork Order`
+    WHERE docstatus = 1
+      AND COALESCE(status, '') IN ('Not Started', 'In Process')
+""", as_dict=True)[0]
+
+# ---- Active BOMs ----
+active_boms = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabBOM`
+    WHERE is_active = 1 AND docstatus = 1
+""", as_dict=True)[0].cnt
+
+# ---- Open Job Cards ----
+open_jc = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabJob Card`
+    WHERE docstatus < 2
+      AND COALESCE(status, '') IN ('Open', 'Work In Progress', 'Material Transferred')
+""", as_dict=True)[0].cnt
+
+# ---- Completed Work Orders this month / last month ----
+completed_month = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabWork Order`
+    WHERE docstatus = 1
+      AND status = 'Completed'
+      AND DATE(actual_end_date) BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0].cnt
+
+completed_last = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabWork Order`
+    WHERE docstatus = 1
+      AND status = 'Completed'
+      AND DATE(actual_end_date) BETWEEN %(s)s AND %(e)s
+""", {"s": last_month_start, "e": last_month_end}, as_dict=True)[0].cnt
+
+completed_delta_pct = None
+if to_flt(completed_last) > 0:
+    completed_delta_pct = ((to_flt(completed_month) - to_flt(completed_last)) / to_flt(completed_last)) * 100.0
+
+# ---- Completed WOs trend (last 12 months) ----
+series_rows = frappe.db.sql("""
+    SELECT DATE_FORMAT(DATE(actual_end_date), %(fmt)s) AS m,
+           COUNT(*) AS total
+    FROM `tabWork Order`
+    WHERE docstatus = 1
+      AND status = 'Completed'
+      AND DATE(actual_end_date) >= %(s)s
+    GROUP BY DATE_FORMAT(DATE(actual_end_date), %(grp)s)
+    ORDER BY m
+""", {"s": twelve_months_start, "fmt": "%Y-%m-01", "grp": "%Y-%m"}, as_dict=True)
+
+series = []
+cursor = twelve_months_start
+by_month = {row.m: to_flt(row.total) for row in series_rows}
+for i in range(12):
+    key = frappe.utils.formatdate(cursor, "yyyy-MM-01")
+    label = frappe.utils.formatdate(cursor, "MMM yy")
+    series.append({"label": label, "value": by_month.get(key, 0)})
+    cursor = frappe.utils.add_months(cursor, 1)
+
+# ---- Top items being produced (last 12 months by qty) ----
+top_items = frappe.db.sql("""
+    SELECT wo.production_item AS name,
+           COALESCE(i.item_name, wo.production_item) AS item_name,
+           i.item_group AS item_group,
+           COALESCE(SUM(wo.qty), 0) AS planned_qty,
+           COALESCE(SUM(wo.produced_qty), 0) AS produced_qty,
+           COUNT(*) AS order_count
+    FROM `tabWork Order` wo
+    LEFT JOIN `tabItem` i ON i.name = wo.production_item
+    WHERE wo.docstatus = 1
+      AND DATE(COALESCE(wo.planned_start_date, wo.creation)) >= %(s)s
+    GROUP BY wo.production_item
+    ORDER BY produced_qty DESC, planned_qty DESC
+    LIMIT 6
+""", {"s": twelve_months_start}, as_dict=True)
+
+# ---- Open Work Orders list ----
+open_work_orders = frappe.db.sql("""
+    SELECT name, production_item, status, qty, produced_qty,
+           planned_start_date, planned_end_date
+    FROM `tabWork Order`
+    WHERE docstatus = 1
+      AND COALESCE(status, '') IN ('Not Started', 'In Process')
+    ORDER BY
+      CASE WHEN planned_end_date IS NULL THEN 1 ELSE 0 END,
+      planned_end_date ASC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Open Job Cards ----
+open_job_cards = frappe.db.sql("""
+    SELECT name, production_item, operation, workstation, status,
+           expected_start_date, expected_end_date
+    FROM `tabJob Card`
+    WHERE docstatus < 2
+      AND COALESCE(status, '') IN ('Open', 'Work In Progress', 'Material Transferred')
+    ORDER BY
+      CASE WHEN expected_end_date IS NULL THEN 1 ELSE 0 END,
+      expected_end_date ASC
+    LIMIT 6
+""", as_dict=True)
+
+frappe.response["message"] = {
+    "stats": {
+        "open_wo_count": open_wo.cnt or 0,
+        "open_wo_pending_qty": to_flt(open_wo.pending_qty),
+        "active_boms": active_boms or 0,
+        "open_jc": open_jc or 0,
+        "completed_month": completed_month or 0,
+        "completed_last": completed_last or 0,
+        "completed_delta_pct": completed_delta_pct,
+    },
+    "completed_series": series,
+    "top_items": top_items,
+    "open_work_orders": open_work_orders,
+    "open_job_cards": open_job_cards,
+}
+'''
+
+
 def _upsert_server_script(name: str, script: str):
     if frappe.db.exists("Server Script", name):
         doc = frappe.get_doc("Server Script", name)
@@ -375,7 +892,27 @@ def install_projects_dashboard():
     _upsert_server_script("projects_dashboard_data", PROJECTS_DASHBOARD_SCRIPT)
 
 
+def install_quality_dashboard():
+    _upsert_server_script("quality_dashboard_data", QUALITY_DASHBOARD_SCRIPT)
+
+
+def install_stock_dashboard():
+    _upsert_server_script("stock_dashboard_data", STOCK_DASHBOARD_SCRIPT)
+
+
+def install_subcontracting_dashboard():
+    _upsert_server_script("subcontracting_dashboard_data", SUBCONTRACTING_DASHBOARD_SCRIPT)
+
+
+def install_manufacturing_dashboard():
+    _upsert_server_script("manufacturing_dashboard_data", MANUFACTURING_DASHBOARD_SCRIPT)
+
+
 def install_all():
     install_assets_dashboard()
     install_buying_dashboard()
     install_projects_dashboard()
+    install_quality_dashboard()
+    install_stock_dashboard()
+    install_subcontracting_dashboard()
+    install_manufacturing_dashboard()
