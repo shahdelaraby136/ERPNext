@@ -37,29 +37,29 @@
 	// ---------- inline CSS ----------
 	function injectStyles() {
 		if (document.getElementById("ce-acc-styles")) return;
+		// Layout (container width / horizontal padding / grid gutter) is owned
+		// by design-system.css via .ds-container + .ds-grid. Only the rules
+		// that the design system *can't* express live here:
+		//   1. hide the native workspace render under our root
+		//   2. let our root span the full main-section width (so .ds-container
+		//      can centre itself within whatever space Frappe gives us)
+		//   3. dismiss the workspace-picker modal
 		const css = `
 			body.ce-acc-active .layout-main-section > *:not(.ce-acc-root) { display: none !important; }
 			body.ce-acc-active .ce-acc-root { display: block !important; }
 			.layout-main-section:has(> .ce-acc-root) > :not(.ce-acc-root) { display: none !important; }
 			.ce-acc-root { padding-bottom: var(--sp-6); }
 
-			/* Full-width override — let the dashboard span the whole content area
-			   beside the sidebar instead of being capped at 1280px. */
 			body.ce-acc-active .container.page-container,
 			body.ce-acc-active .page-container,
 			body.ce-acc-active .layout-main,
 			body.ce-acc-active .layout-main-section,
 			body.ce-acc-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
-			body.ce-acc-active .ce-acc-root .ce-hero-inner,
-			body.ce-acc-active .ce-acc-root .ce-section,
-			body.ce-acc-active .ce-acc-root .ce-split,
-			body.ce-acc-active .ce-acc-root .ce-stats,
-			body.ce-acc-active .ce-acc-root .ce-quick-grid { max-width: none !important; width: auto !important; }
-			body.ce-acc-active .ce-acc-root .ce-section { padding-left: var(--sp-3); padding-right: var(--sp-3); }
-			body.ce-acc-active .ce-acc-root .ce-hero { padding-left: var(--sp-3); padding-right: var(--sp-3); }
+			/* Wider dashboard container — design-system .ds-container caps at
+			   1280px which leaves big side margins on widescreen monitors.
+			   Bump to 1600px for this hub only. */
+			body.ce-acc-active .ds-container { max-width: 1600px !important; }
 
-			/* Suppress the workspace picker modal that Frappe shows for parent
-			   workspaces with children. We render our dashboard instead. */
 			body.ce-acc-active .modal[id*="workspace"],
 			body.ce-acc-active .modal-dialog .workspace-picker,
 			body.ce-acc-active .modal-dialog .modal-content:has(.module-link),
@@ -165,59 +165,69 @@
 			? frappe.datetime.global_date_format(today)
 			: today;
 
+		// Single .ds-container wraps every section, guaranteeing identical
+		// horizontal edges across hero, KPIs, modules, and split panels.
+		// Hero uses a full-bleed background but its inner content sits in
+		// the same .ds-container as everything else.
 		root.innerHTML = `
 			<div class="ce-hero ce-hero-acc">
-				<div class="ce-hero-inner">
-					<div class="ce-hero-text">
-						<div class="ce-hero-eyebrow">${esc(t("Accounting"))}</div>
-						<h1 class="ce-hero-title">${esc(t("Accounting Dashboard"))}</h1>
-						<div class="ce-hero-sub">${esc(todayPretty)}</div>
-					</div>
-					<div class="ce-hero-actions">
-						<button class="btn btn-light ce-hero-btn" data-action="new-sales-invoice">
-							<span class="ce-ic">🧾</span> ${esc(t("Sales Invoice"))}
-						</button>
-						<button class="btn btn-light ce-hero-btn" data-action="new-purchase-invoice">
-							<span class="ce-ic">📥</span> ${esc(t("Purchase Invoice"))}
-						</button>
-						<button class="btn btn-light ce-hero-btn" data-action="new-payment">
-							<span class="ce-ic">💳</span> ${esc(t("Payment Entry"))}
-						</button>
+				<div class="ds-container">
+					<div class="ce-hero-inner">
+						<div class="ce-hero-text">
+							<div class="ce-hero-eyebrow">${esc(t("Accounting"))}</div>
+							<h1 class="ce-hero-title">${esc(t("Accounting Dashboard"))}</h1>
+							<div class="ce-hero-sub">${esc(todayPretty)}</div>
+						</div>
+						<div class="ce-hero-actions">
+							<button class="btn btn-light ce-hero-btn" data-action="new-sales-invoice">
+								<span class="ce-ic">🧾</span> ${esc(t("Sales Invoice"))}
+							</button>
+							<button class="btn btn-light ce-hero-btn" data-action="new-purchase-invoice">
+								<span class="ce-ic">📥</span> ${esc(t("Purchase Invoice"))}
+							</button>
+							<button class="btn btn-light ce-hero-btn" data-action="new-payment">
+								<span class="ce-ic">💳</span> ${esc(t("Payment Entry"))}
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="ce-section">
-				<div class="ce-section-head">${esc(t("Financial snapshot"))}</div>
-				<div class="ce-stats" id="ce-acc-stats"></div>
-			</div>
+			<div class="ds-container">
+				<section class="ds-section--md">
+					<div class="ce-section-head">${esc(t("Financial snapshot"))}</div>
+					<div class="ds-grid" id="ce-acc-stats"></div>
+				</section>
 
-			<div class="ce-section">
-				<div class="ce-section-head">${esc(t("Modules"))}</div>
-				<div class="ce-quick-grid" id="ce-acc-quick"></div>
-			</div>
+				<section class="ds-section--md">
+					<div class="ce-section-head">${esc(t("Modules"))}</div>
+					<div class="ds-grid" id="ce-acc-quick"></div>
+				</section>
 
-			<div class="ce-split">
-				<div class="ce-panel">
-					<div class="ce-panel-head">
-						<div class="ce-panel-title">${esc(t("Overdue sales invoices"))}</div>
-						<a class="ce-panel-link" href="/app/sales-invoice?status=Overdue">${esc(t("View all"))} →</a>
+				<section class="ds-section--md">
+					<div class="ds-grid">
+						<div class="ds-col-8 ce-panel">
+							<div class="ce-panel-head">
+								<div class="ce-panel-title">${esc(t("Overdue sales invoices"))}</div>
+								<a class="ce-panel-link" href="/app/sales-invoice?status=Overdue">${esc(t("View all"))} →</a>
+							</div>
+							<div class="ce-panel-body" id="ce-acc-overdue">
+								<div class="ce-skeleton"></div>
+								<div class="ce-skeleton"></div>
+							</div>
+						</div>
+						<div class="ds-col-4 ce-panel">
+							<div class="ce-panel-head">
+								<div class="ce-panel-title">${esc(t("Recent payments"))}</div>
+								<a class="ce-panel-link" href="/app/payment-entry">${esc(t("View all"))} →</a>
+							</div>
+							<div class="ce-panel-body" id="ce-acc-payments">
+								<div class="ce-skeleton"></div>
+								<div class="ce-skeleton"></div>
+							</div>
+						</div>
 					</div>
-					<div class="ce-panel-body" id="ce-acc-overdue">
-						<div class="ce-skeleton"></div>
-						<div class="ce-skeleton"></div>
-					</div>
-				</div>
-				<div class="ce-panel">
-					<div class="ce-panel-head">
-						<div class="ce-panel-title">${esc(t("Recent payments"))}</div>
-						<a class="ce-panel-link" href="/app/payment-entry">${esc(t("View all"))} →</a>
-					</div>
-					<div class="ce-panel-body" id="ce-acc-payments">
-						<div class="ce-skeleton"></div>
-						<div class="ce-skeleton"></div>
-					</div>
-				</div>
+				</section>
 			</div>
 		`;
 
@@ -244,7 +254,7 @@
 		const wrap = root.querySelector("#ce-acc-stats");
 		stats.forEach(s => {
 			wrap.insertAdjacentHTML("beforeend", `
-				<a class="ce-stat ce-stat-${s.tone}" href="${esc(s.href)}">
+				<a class="ds-col-3 ce-stat ce-stat-${s.tone}" href="${esc(s.href)}">
 					<div class="ce-stat-icon">${s.icon}</div>
 					<div class="ce-stat-body">
 						<div class="ce-stat-label">${esc(s.label)}</div>
@@ -278,8 +288,11 @@
 			{ label: t("Subscription"),      icon: "🔁", tone: "rose",   href: "/app/subscription" },
 		];
 		const wrap = root.querySelector("#ce-acc-quick");
+		// 9 modules at ds-col-3 = 4 per row → 3 rows (3rd row = 1 item).
+		// Better aesthetic: ds-col-4 → 3 per row × 3 rows. Sticking with
+		// ds-col-3 to align with KPI cards above on the same 12-col grid.
 		wrap.innerHTML = actions.map(a => `
-			<a class="ce-quick ce-quick-${a.tone}" href="${esc(a.href)}">
+			<a class="ds-col-3 ce-quick ce-quick-${a.tone}" href="${esc(a.href)}">
 				<div class="ce-quick-icon">${a.icon}</div>
 				<div class="ce-quick-label">${esc(a.label)}</div>
 			</a>

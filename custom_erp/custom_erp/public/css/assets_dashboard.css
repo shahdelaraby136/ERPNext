@@ -1,0 +1,39 @@
+/* ============================================================
+   Custom Assets Dashboard — reuses .ce-theme-brand from
+   selling_dashboard.css for all visual primitives. This file
+   only owns the root container + the body-class hide rules
+   that scope the hijack to /app/assets.
+   ============================================================ */
+
+.ce-asset-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+/* Hero gradient — same soft tint as selling */
+.ce-theme-brand .ce-hero-asset {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+/* Hide native workspace when our dashboard is active */
+body.ce-asset-active .layout-main-section > *:not(.ce-asset-root) { display: none !important; }
+body.ce-asset-active .ce-asset-root { display: block !important; }
+.layout-main-section:has(> .ce-asset-root) > :not(.ce-asset-root) { display: none !important; }
+
+/* Free up the main section so .ds-container can centre itself */
+body.ce-asset-active .container.page-container,
+body.ce-asset-active .page-container,
+body.ce-asset-active .layout-main,
+body.ce-asset-active .layout-main-section,
+body.ce-asset-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+/* Wider dashboard container — match selling hub width */
+body.ce-asset-active .ds-container { max-width: 1600px !important; }

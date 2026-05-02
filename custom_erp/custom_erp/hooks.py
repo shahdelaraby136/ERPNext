@@ -32,7 +32,7 @@ fixtures = [
     {"dt": "Print Format", "filters": [["module", "=", "Custom ERP"]]},
     {"dt": "Workspace", "filters": [["name", "in", ["Custom ERP", "Accounting"]]]},
     {"dt": "Property Setter", "filters": [["doc_type", "in", ["Patient Encounter"]]]},
-    {"dt": "Server Script", "filters": [["name", "in", ["selling_dashboard_data"]]]},
+    {"dt": "Server Script", "filters": [["name", "in", ["selling_dashboard_data", "assets_dashboard_data", "buying_dashboard_data", "projects_dashboard_data"]]]},
     {"dt": "Custom Field", "filters": [["name", "in", ["Customer-customer_health_score"]]]},
 ]
 
@@ -61,12 +61,18 @@ app_include_css = [
     "/assets/custom_erp/css/design-system.css?v=2",
     "/assets/custom_erp/css/workspace.css?v=2",
     "/assets/custom_erp/css/selling_dashboard.css?v=15",
+    "/assets/custom_erp/css/assets_dashboard.css?v=1",
+    "/assets/custom_erp/css/buying_dashboard.css?v=1",
+    "/assets/custom_erp/css/projects_dashboard.css?v=1",
 ]
 app_include_js = [
     "/assets/custom_erp/js/selling_dashboard.js?v=5",
-    "/assets/custom_erp/js/workspace_redirects.js?v=7",
+    "/assets/custom_erp/js/workspace_redirects.js?v=10",
     "/assets/custom_erp/js/invoicing_dashboard.js?v=5",
     "/assets/custom_erp/js/accounting_hub.js?v=5",
+    "/assets/custom_erp/js/assets_hub.js?v=3",
+    "/assets/custom_erp/js/buying_hub.js?v=1",
+    "/assets/custom_erp/js/projects_hub.js?v=1",
 ]
 
 # include js, css files in header of web template
@@ -287,4 +293,3 @@ before_request = ["custom_erp.runtime_patches.apply_runtime_patches"]
 # ------------
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
-

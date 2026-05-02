@@ -1,0 +1,301 @@
+/* ==========================================================================
+   Custom ERP — Layout System (containers + 12-column grid)
+   Loaded AFTER custom_theme.css (depends on its tokens: --sp-*, --bg, etc.)
+
+   IMPORTANT — naming:
+   - Container classes:  .ds-container, .ds-container-wide, .ds-container-form
+   - Grid:               .ds-grid
+   - Column spans:       .ds-col-1 … .ds-col-12  (and .ds-col-{md|sm}-N)
+   We namespace columns as .ds-col-* (NOT .col-*) because Bootstrap-style
+   .col-* classes are already used extensively by Frappe/ERPNext core
+   (form layouts, page heads, dialogs). Overriding them would break the
+   desk. .ds-col-* is collision-free.
+
+   Usage:
+     <div class="ds-container">
+       <div class="ds-grid">
+         <section class="ds-col-8">…</section>
+         <aside   class="ds-col-4">…</aside>
+       </div>
+     </div>
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Containers — centred, opt-in wrappers for custom content.
+      Form pages get a targeted global at the bottom of this file.
+   -------------------------------------------------------------------------- */
+.ds-container,
+.ds-container-wide,
+.ds-container-form {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--sp-3);   /* 24px on desktop */
+  box-sizing: border-box;
+}
+.ds-container       { max-width: 1280px; }   /* Default — THE shared wrapper */
+.ds-container-wide  { max-width: 1440px; }   /* Exceptional cases only (very dense ops boards). Avoid mixing with .ds-container in the same page. */
+.ds-container-form  { max-width: 960px;  }   /* Forms, detail pages */
+
+/* --------------------------------------------------------------------------
+   1b. .ds-page — THE canonical layout wrapper.
+
+       Every new custom page (dashboards, custom report screens, custom
+       list pages we author) MUST be wrapped in <div class="ds-page">.
+       It is .ds-container + a vertical-rhythm flex column that
+       guarantees:
+         - Every section starts/ends on the SAME vertical edges.
+         - 24px outer padding (margin) on every side.
+         - 24px gap between stacked sections, with no per-section margins.
+         - A single source of truth for page-level layout.
+
+       Rule: do NOT add margin-left / margin-right / margin-top /
+       margin-bottom to direct children of .ds-page. The wrapper owns
+       all outer rhythm. Sections style themselves only on the inside
+       (16px or 24px internal padding via .ds-p-2 / .ds-p-3).
+   -------------------------------------------------------------------------- */
+.ds-page {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: var(--sp-3);          /* 24px outer padding on all sides */
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);               /* 24px between stacked sections */
+  box-sizing: border-box;
+}
+
+/* Page header — same vertical edges as the rest of the page.
+   Use this slot for the H1 + subtitle + page-level actions. */
+.ds-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+.ds-page__title {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  color: var(--text-primary);
+  margin: 0;
+}
+.ds-page__subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: var(--sp-xs);
+}
+
+/* Direct children of .ds-page are sections.
+   Forbid horizontal margin overrides — they would break edge alignment.
+   Authors style sections with PADDING (inside) only. */
+.ds-page > * {
+  margin-inline: 0 !important;   /* enforce edge alignment */
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   2. Grid — CSS Grid, 12 columns, 16px gutter at every breakpoint.
+
+      Why 16px and not 24px?
+      The strict layout rule is: every section in a page (cards, charts,
+      tables) must start and end on the EXACT same vertical lines. A
+      smaller, constant gutter keeps that alignment tight and predictable,
+      and makes columns inside cards feel rhythmically related to the
+      24px outer padding (24 outside, 16 inside).
+
+      minmax(0, 1fr) prevents blowing out the layout when child content
+      is wider than expected (e.g. a long table inside a column).
+   -------------------------------------------------------------------------- */
+.ds-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--sp-2);              /* 16px row+column gutter, all breakpoints */
+  width: 100%;
+}
+
+/* Column spans — auto-clamp at 12. Default behaviour is desktop. */
+.ds-col-1  { grid-column: span 1;  }
+.ds-col-2  { grid-column: span 2;  }
+.ds-col-3  { grid-column: span 3;  }
+.ds-col-4  { grid-column: span 4;  }
+.ds-col-5  { grid-column: span 5;  }
+.ds-col-6  { grid-column: span 6;  }
+.ds-col-7  { grid-column: span 7;  }
+.ds-col-8  { grid-column: span 8;  }
+.ds-col-9  { grid-column: span 9;  }
+.ds-col-10 { grid-column: span 10; }
+.ds-col-11 { grid-column: span 11; }
+.ds-col-12 { grid-column: 1 / -1;  }   /* full row */
+
+/* Optional: explicit start positions (for offset patterns) */
+.ds-col-start-1  { grid-column-start: 1;  }
+.ds-col-start-2  { grid-column-start: 2;  }
+.ds-col-start-3  { grid-column-start: 3;  }
+.ds-col-start-4  { grid-column-start: 4;  }
+.ds-col-start-5  { grid-column-start: 5;  }
+.ds-col-start-6  { grid-column-start: 6;  }
+.ds-col-start-7  { grid-column-start: 7;  }
+
+/* --------------------------------------------------------------------------
+   3. Responsive — tablet collapses 12-col into 8-col semantics by halving
+      large spans, mobile stacks.
+      Breakpoints chosen to align with Frappe's $screen-md (992px) and
+      $screen-sm (768px) so we don't fight the framework.
+   -------------------------------------------------------------------------- */
+
+/* Tablet: < 992px — 8 effective columns. Outer padding stays 24px so the
+   container's vertical edges don't shift between desktop and tablet
+   (sections must align consistently across breakpoints). Gutter stays
+   16px for the same reason. */
+@media (max-width: 991.98px) {
+  .ds-container,
+  .ds-container-wide,
+  .ds-container-form,
+  .ds-page {
+    padding-inline: var(--sp-3);  /* 24px — same as desktop */
+  }
+  /* gap on .ds-grid stays at 16px from the base rule */
+
+  /* Tablet defaults: anything wider than half-row collapses to full row. */
+  .ds-col-7,
+  .ds-col-8,
+  .ds-col-9,
+  .ds-col-10,
+  .ds-col-11 { grid-column: 1 / -1; }
+
+  /* Tablet-specific overrides — author-controlled */
+  .ds-col-md-1  { grid-column: span 1;  }
+  .ds-col-md-2  { grid-column: span 2;  }
+  .ds-col-md-3  { grid-column: span 3;  }
+  .ds-col-md-4  { grid-column: span 4;  }
+  .ds-col-md-6  { grid-column: span 6;  }
+  .ds-col-md-8  { grid-column: span 8;  }
+  .ds-col-md-12 { grid-column: 1 / -1;  }
+}
+
+/* Mobile: < 768px — 4 effective columns. Outer padding tightens to 16px
+   so content doesn't get squeezed on small phones. Gutter stays 16px. */
+@media (max-width: 767.98px) {
+  .ds-container,
+  .ds-container-wide,
+  .ds-container-form,
+  .ds-page {
+    padding-inline: var(--sp-2);  /* 16px */
+  }
+
+  /* Stack everything by default on mobile */
+  .ds-col-1,  .ds-col-2,  .ds-col-3,  .ds-col-4,
+  .ds-col-5,  .ds-col-6,  .ds-col-7,  .ds-col-8,
+  .ds-col-9,  .ds-col-10, .ds-col-11, .ds-col-12 {
+    grid-column: 1 / -1;
+  }
+
+  /* Mobile-specific overrides — author-controlled */
+  .ds-col-sm-2  { grid-column: span 2; }   /* half */
+  .ds-col-sm-3  { grid-column: span 3; }   /* 3 of 4 — wide field */
+  .ds-col-sm-4  { grid-column: span 4; }   /* full row in 4-col mental model */
+  .ds-col-sm-6  { grid-column: span 6; }   /* half of 12-col underlying */
+  .ds-col-sm-12 { grid-column: 1 / -1; }
+}
+
+/* --------------------------------------------------------------------------
+   4. Section / stack utilities — for spacing rhythm inside containers.
+      Reach for these instead of one-off margins.
+   -------------------------------------------------------------------------- */
+
+/* Vertical rhythm between sections inside a container */
+.ds-section { margin-block: var(--sp-6); }       /* 48px — large divider */
+.ds-section--lg { margin-block: var(--sp-6); }   /* alias */
+.ds-section--md { margin-block: var(--sp-4); }   /* 32px */
+.ds-section--sm { margin-block: var(--sp-3); }   /* 24px */
+
+/* Stack — children flow vertically with consistent gap.
+   Use on the parent of a list of cards/blocks. */
+.ds-stack    { display: flex; flex-direction: column; gap: var(--sp-3); } /* 24 */
+.ds-stack-sm { display: flex; flex-direction: column; gap: var(--sp-1); } /* 8  */
+.ds-stack-md { display: flex; flex-direction: column; gap: var(--sp-2); } /* 16 */
+.ds-stack-lg { display: flex; flex-direction: column; gap: var(--sp-4); } /* 32 */
+
+/* Inline cluster — children flow horizontally, wrap as needed.
+   Use for filter rows, button groups, tag lists. */
+.ds-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1);                /* 8px */
+}
+.ds-cluster-md { gap: var(--sp-2); }  /* 16px */
+.ds-cluster-lg { gap: var(--sp-3); }  /* 24px */
+
+/* --------------------------------------------------------------------------
+   5. Spacing utilities — the only spacing values we allow.
+      Padding & margin, in 4/8/16/24/32/48 only.
+   -------------------------------------------------------------------------- */
+/* Padding (all sides) */
+.ds-p-xs { padding: var(--sp-xs); }   /*  4 */
+.ds-p-1  { padding: var(--sp-1);  }   /*  8 */
+.ds-p-2  { padding: var(--sp-2);  }   /* 16 */
+.ds-p-3  { padding: var(--sp-3);  }   /* 24 */
+.ds-p-4  { padding: var(--sp-4);  }   /* 32 */
+.ds-p-6  { padding: var(--sp-6);  }   /* 48 */
+
+/* Padding inline (left+right) */
+.ds-px-1 { padding-inline: var(--sp-1); }
+.ds-px-2 { padding-inline: var(--sp-2); }
+.ds-px-3 { padding-inline: var(--sp-3); }
+.ds-px-4 { padding-inline: var(--sp-4); }
+
+/* Padding block (top+bottom) */
+.ds-py-1 { padding-block: var(--sp-1); }
+.ds-py-2 { padding-block: var(--sp-2); }
+.ds-py-3 { padding-block: var(--sp-3); }
+.ds-py-4 { padding-block: var(--sp-4); }
+
+/* Margin block (top+bottom) — vertical rhythm only.
+   We deliberately do NOT expose margin-inline utilities;
+   horizontal centring is done by containers. */
+.ds-mb-1 { margin-bottom: var(--sp-1); }
+.ds-mb-2 { margin-bottom: var(--sp-2); }
+.ds-mb-3 { margin-bottom: var(--sp-3); }
+.ds-mb-4 { margin-bottom: var(--sp-4); }
+.ds-mb-6 { margin-bottom: var(--sp-6); }
+.ds-mt-1 { margin-top: var(--sp-1); }
+.ds-mt-2 { margin-top: var(--sp-2); }
+.ds-mt-3 { margin-top: var(--sp-3); }
+.ds-mt-4 { margin-top: var(--sp-4); }
+.ds-mt-6 { margin-top: var(--sp-6); }
+
+/* --------------------------------------------------------------------------
+   6. Targeted globals — the only places we touch ERPNext's existing
+      structure. Both are conservative and reversible per-page.
+   -------------------------------------------------------------------------- */
+
+/* 6a. Form pages — cap form width at 960px and centre.
+       Frappe wraps every form-mode page in `.page-form` and the form body
+       in `.form-layout`. This stops forms from sprawling on wide monitors
+       (a real readability problem for clinicians editing patient records).
+
+       OPT OUT: add .ds-form-fullwidth to the page (or any ancestor of
+       .form-layout) for forms that genuinely need full width
+       (POS, large item-grid quick entries, etc.). */
+.page-form .form-layout,
+.page-container .form-layout {
+  max-width: 960px;
+  margin-inline: auto;
+}
+.ds-form-fullwidth .form-layout,
+.page-form.ds-form-fullwidth .form-layout {
+  max-width: none;
+}
+
+/* 6b. Dashboard sections built with custom .ce-* classes already
+       respect their own width; nothing to do globally for dashboards.
+       List/report views are intentionally left full-width — their tables
+       benefit from the extra horizontal real estate. */
+
+/* --------------------------------------------------------------------------
+   7. Reduced-motion — no motion declared in this file, but child
+      transforms inherit from custom_theme.css's @media block. Nothing
+      to add here. Kept as a marker for future authors.
+   -------------------------------------------------------------------------- */

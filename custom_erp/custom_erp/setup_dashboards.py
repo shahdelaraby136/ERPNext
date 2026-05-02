@@ -1,0 +1,381 @@
+"""Idempotent installer for custom dashboard Server Scripts.
+
+Run from inside the bench container:
+    bench --site <site> execute custom_erp.setup_dashboards.install_assets_dashboard
+"""
+
+import frappe
+
+
+ASSETS_DASHBOARD_SCRIPT = r'''
+# Server Script: assets_dashboard_data
+# Returns KPIs + lists + category chart for /app/assets hub.
+
+result = {}
+
+# ---- KPIs ----
+total_assets = frappe.db.count("Asset")
+active_assets = frappe.db.count(
+    "Asset",
+    filters={"docstatus": 1, "status": ["not in", ["Sold", "Scrapped", "Decapitalized"]]},
+)
+maintenance_logs = frappe.db.count("Asset Maintenance Log")
+
+sum_row = frappe.db.sql(
+    "SELECT COALESCE(SUM(purchase_amount), 0) FROM `tabAsset` WHERE docstatus < 2",
+    as_list=True,
+)
+total_value = float(sum_row[0][0]) if sum_row and sum_row[0] else 0.0
+
+result["stats"] = {
+    "total_assets": total_assets or 0,
+    "active_assets": active_assets or 0,
+    "maintenance_logs": maintenance_logs or 0,
+    "total_value": total_value,
+}
+
+# ---- Asset value by category ----
+result["value_by_category"] = frappe.db.sql(
+    """
+    SELECT COALESCE(NULLIF(asset_category, ''), 'Uncategorised') AS label,
+           COALESCE(SUM(purchase_amount), 0) AS value
+    FROM `tabAsset`
+    WHERE docstatus < 2
+    GROUP BY asset_category
+    ORDER BY value DESC
+    LIMIT 10
+    """,
+    as_dict=True,
+)
+
+# ---- Recent assets ----
+result["recent_assets"] = frappe.get_all(
+    "Asset",
+    fields=["name", "asset_name", "asset_category", "status", "purchase_amount"],
+    order_by="creation desc",
+    limit=6,
+)
+
+# ---- Recent maintenance logs ----
+result["maintenance_log_rows"] = frappe.get_all(
+    "Asset Maintenance Log",
+    fields=["name", "asset_name", "maintenance_type", "maintenance_status", "completion_date"],
+    order_by="modified desc",
+    limit=6,
+)
+
+# ---- Recent movements ----
+result["movements"] = frappe.get_all(
+    "Asset Movement",
+    fields=["name", "purpose", "transaction_date", "company"],
+    order_by="modified desc",
+    limit=6,
+)
+
+frappe.response["message"] = result
+'''
+
+
+BUYING_DASHBOARD_SCRIPT = r'''
+# Server Script - Type: API
+# Returns aggregated metrics for the custom Buying dashboard.
+# Sandbox-safe: only frappe.* APIs (no `import`, no built-in `float`).
+
+today = frappe.utils.today()
+month_start = frappe.utils.get_first_day(today)
+last_month_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -1))
+last_month_end = frappe.utils.get_last_day(frappe.utils.add_months(today, -1))
+twelve_months_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -11))
+
+def to_flt(v):
+    return frappe.utils.flt(v or 0)
+
+# ---- Spend (this month) ----
+spend_month = frappe.db.sql("""
+    SELECT COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0].total
+
+# ---- Spend (last month) ----
+spend_last = frappe.db.sql("""
+    SELECT COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date BETWEEN %(s)s AND %(e)s
+""", {"s": last_month_start, "e": last_month_end}, as_dict=True)[0].total
+
+spend_delta_pct = None
+if to_flt(spend_last) > 0:
+    spend_delta_pct = ((to_flt(spend_month) - to_flt(spend_last)) / to_flt(spend_last)) * 100.0
+
+# ---- Open Purchase Orders ----
+open_po = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt, COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabPurchase Order`
+    WHERE docstatus = 1
+      AND status NOT IN ('Closed', 'Completed', 'Cancelled', 'Delivered')
+""", as_dict=True)[0]
+
+# ---- Overdue Purchase Invoices ----
+overdue = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt, COALESCE(SUM(outstanding_amount), 0) AS total
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND status = 'Overdue'
+""", as_dict=True)[0]
+
+# ---- Active suppliers ----
+active_suppliers = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabSupplier`
+    WHERE disabled = 0
+""", as_dict=True)[0].cnt
+
+# ---- Spend series (last 12 months) ----
+series_rows = frappe.db.sql("""
+    SELECT DATE_FORMAT(posting_date, %(fmt)s) AS m,
+           COALESCE(SUM(grand_total), 0) AS total
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND is_return = 0
+      AND posting_date >= %(s)s
+    GROUP BY DATE_FORMAT(posting_date, %(grp)s)
+    ORDER BY m
+""", {"s": twelve_months_start, "fmt": "%Y-%m-01", "grp": "%Y-%m"}, as_dict=True)
+
+series = []
+cursor = twelve_months_start
+by_month = {row.m: to_flt(row.total) for row in series_rows}
+for i in range(12):
+    key = frappe.utils.formatdate(cursor, "yyyy-MM-01")
+    label = frappe.utils.formatdate(cursor, "MMM yy")
+    series.append({"label": label, "value": by_month.get(key, 0)})
+    cursor = frappe.utils.add_months(cursor, 1)
+
+# ---- Top suppliers by spend (last 12 months) ----
+top_suppliers = frappe.db.sql("""
+    SELECT pi.supplier AS name,
+           COALESCE(s.supplier_name, pi.supplier) AS supplier_name,
+           s.supplier_group AS supplier_group,
+           COALESCE(SUM(pi.grand_total), 0) AS spend
+    FROM `tabPurchase Invoice` pi
+    LEFT JOIN `tabSupplier` s ON s.name = pi.supplier
+    WHERE pi.docstatus = 1
+      AND pi.is_return = 0
+      AND pi.posting_date >= %(s)s
+    GROUP BY pi.supplier
+    ORDER BY spend DESC
+    LIMIT 6
+""", {"s": twelve_months_start}, as_dict=True)
+
+# ---- Open POs list (top 6 by amount) ----
+open_purchase_orders = frappe.db.sql("""
+    SELECT name, supplier, supplier_name, status, grand_total, transaction_date
+    FROM `tabPurchase Order`
+    WHERE docstatus = 1
+      AND status NOT IN ('Closed', 'Completed', 'Cancelled', 'Delivered')
+    ORDER BY grand_total DESC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Overdue invoice list (top 6 by outstanding) ----
+overdue_invoices = frappe.db.sql("""
+    SELECT name, supplier, supplier_name, due_date, outstanding_amount
+    FROM `tabPurchase Invoice`
+    WHERE docstatus = 1
+      AND status = 'Overdue'
+    ORDER BY outstanding_amount DESC
+    LIMIT 6
+""", as_dict=True)
+
+frappe.response["message"] = {
+    "stats": {
+        "spend_month": to_flt(spend_month),
+        "spend_last_month": to_flt(spend_last),
+        "spend_delta_pct": spend_delta_pct,
+        "open_po_count": open_po.cnt or 0,
+        "open_po_value": to_flt(open_po.total),
+        "overdue_count": overdue.cnt or 0,
+        "overdue_value": to_flt(overdue.total),
+        "total_suppliers": active_suppliers or 0,
+    },
+    "spend_series": series,
+    "top_suppliers": top_suppliers,
+    "open_purchase_orders": open_purchase_orders,
+    "overdue_invoices": overdue_invoices,
+}
+'''
+
+
+PROJECTS_DASHBOARD_SCRIPT = r'''
+# Server Script - Type: API
+# Returns aggregated metrics for the custom Projects dashboard.
+# Sandbox-safe: only frappe.* APIs (no `import`, no built-in `float`).
+
+today = frappe.utils.today()
+month_start = frappe.utils.get_first_day(today)
+last_month_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -1))
+last_month_end = frappe.utils.get_last_day(frappe.utils.add_months(today, -1))
+twelve_months_start = frappe.utils.get_first_day(frappe.utils.add_months(today, -11))
+
+def to_flt(v):
+    return frappe.utils.flt(v or 0)
+
+# ---- KPIs ----
+active_projects = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabProject`
+    WHERE status = 'Open' AND docstatus < 2
+""", as_dict=True)[0].cnt
+
+open_tasks = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabTask`
+    WHERE COALESCE(status, '') NOT IN ('Completed', 'Cancelled', 'Template')
+      AND docstatus < 2
+""", as_dict=True)[0].cnt
+
+overdue_tasks = frappe.db.sql("""
+    SELECT COUNT(*) AS cnt
+    FROM `tabTask`
+    WHERE COALESCE(status, '') NOT IN ('Completed', 'Cancelled', 'Template')
+      AND docstatus < 2
+      AND exp_end_date IS NOT NULL
+      AND exp_end_date < %(t)s
+""", {"t": today}, as_dict=True)[0].cnt
+
+hours_month = frappe.db.sql("""
+    SELECT COALESCE(SUM(total_hours), 0) AS total
+    FROM `tabTimesheet`
+    WHERE docstatus = 1
+      AND start_date BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0].total
+
+hours_last = frappe.db.sql("""
+    SELECT COALESCE(SUM(total_hours), 0) AS total
+    FROM `tabTimesheet`
+    WHERE docstatus = 1
+      AND start_date BETWEEN %(s)s AND %(e)s
+""", {"s": last_month_start, "e": last_month_end}, as_dict=True)[0].total
+
+hours_delta_pct = None
+if to_flt(hours_last) > 0:
+    hours_delta_pct = ((to_flt(hours_month) - to_flt(hours_last)) / to_flt(hours_last)) * 100.0
+
+billable_month = frappe.db.sql("""
+    SELECT COALESCE(SUM(total_billable_amount), 0) AS total
+    FROM `tabTimesheet`
+    WHERE docstatus = 1
+      AND start_date BETWEEN %(s)s AND %(e)s
+""", {"s": month_start, "e": today}, as_dict=True)[0].total
+
+# ---- Hours series (last 12 months) ----
+series_rows = frappe.db.sql("""
+    SELECT DATE_FORMAT(start_date, %(fmt)s) AS m,
+           COALESCE(SUM(total_hours), 0) AS total
+    FROM `tabTimesheet`
+    WHERE docstatus = 1
+      AND start_date >= %(s)s
+    GROUP BY DATE_FORMAT(start_date, %(grp)s)
+    ORDER BY m
+""", {"s": twelve_months_start, "fmt": "%Y-%m-01", "grp": "%Y-%m"}, as_dict=True)
+
+series = []
+cursor = twelve_months_start
+by_month = {row.m: to_flt(row.total) for row in series_rows}
+for i in range(12):
+    key = frappe.utils.formatdate(cursor, "yyyy-MM-01")
+    label = frappe.utils.formatdate(cursor, "MMM yy")
+    series.append({"label": label, "value": by_month.get(key, 0)})
+    cursor = frappe.utils.add_months(cursor, 1)
+
+# ---- Top active projects (by progress, then deadline) ----
+top_projects = frappe.db.sql("""
+    SELECT name, project_name, status, priority, customer,
+           percent_complete, expected_end_date
+    FROM `tabProject`
+    WHERE status = 'Open' AND docstatus < 2
+    ORDER BY
+      CASE WHEN expected_end_date IS NULL THEN 1 ELSE 0 END,
+      expected_end_date ASC,
+      modified DESC
+    LIMIT 6
+""", as_dict=True)
+
+# ---- Overdue tasks ----
+overdue_task_rows = frappe.db.sql("""
+    SELECT name, subject, project, status, priority, exp_end_date
+    FROM `tabTask`
+    WHERE COALESCE(status, '') NOT IN ('Completed', 'Cancelled', 'Template')
+      AND docstatus < 2
+      AND exp_end_date IS NOT NULL
+      AND exp_end_date < %(t)s
+    ORDER BY exp_end_date ASC
+    LIMIT 6
+""", {"t": today}, as_dict=True)
+
+# ---- Recent timesheets ----
+recent_timesheets = frappe.db.sql("""
+    SELECT name, title, employee_name, parent_project,
+           total_hours, total_billable_amount, start_date, status
+    FROM `tabTimesheet`
+    WHERE docstatus < 2
+    ORDER BY modified DESC
+    LIMIT 6
+""", as_dict=True)
+
+frappe.response["message"] = {
+    "stats": {
+        "active_projects": active_projects or 0,
+        "open_tasks": open_tasks or 0,
+        "overdue_tasks": overdue_tasks or 0,
+        "hours_month": to_flt(hours_month),
+        "hours_last_month": to_flt(hours_last),
+        "hours_delta_pct": hours_delta_pct,
+        "billable_month": to_flt(billable_month),
+    },
+    "hours_series": series,
+    "top_projects": top_projects,
+    "overdue_task_rows": overdue_task_rows,
+    "recent_timesheets": recent_timesheets,
+}
+'''
+
+
+def _upsert_server_script(name: str, script: str):
+    if frappe.db.exists("Server Script", name):
+        doc = frappe.get_doc("Server Script", name)
+    else:
+        doc = frappe.new_doc("Server Script")
+        doc.name = name
+
+    doc.script_type = "API"
+    doc.api_method = name
+    doc.allow_guest = 0
+    doc.disabled = 0
+    doc.script = script
+    doc.save(ignore_permissions=True)
+    frappe.db.commit()
+    print("OK: Server Script '{}' installed (script_type=API).".format(name))
+
+
+def install_assets_dashboard():
+    _upsert_server_script("assets_dashboard_data", ASSETS_DASHBOARD_SCRIPT)
+
+
+def install_buying_dashboard():
+    _upsert_server_script("buying_dashboard_data", BUYING_DASHBOARD_SCRIPT)
+
+
+def install_projects_dashboard():
+    _upsert_server_script("projects_dashboard_data", PROJECTS_DASHBOARD_SCRIPT)
+
+
+def install_all():
+    install_assets_dashboard()
+    install_buying_dashboard()
+    install_projects_dashboard()

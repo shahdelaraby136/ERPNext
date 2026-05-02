@@ -271,11 +271,8 @@
   margin-top: var(--sp-xs);
 }
 
-/* Hover lift is handled by the global rule in custom_theme.css.
-   Only adjust the active-state border accent here. */
-.shortcut-widget-box:hover {
-  border-color: var(--primary-light) !important;
-}
+/* Hover (lift + blue border + blue shadow) is the unified card hover in
+   custom_theme.css §17. No screen-specific overrides here. */
 
 /* ---- 7. Onboarding & quick-list widgets --------------------------- */
 .onboarding-widget-box,

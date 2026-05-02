@@ -1,0 +1,282 @@
+[
+ {
+  "department": "Accident And Emergency Care",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.765250",
+  "name": "Accident And Emergency Care",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Anaesthetics",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.765835",
+  "name": "Anaesthetics",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Biochemistry",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.766301",
+  "name": "Biochemistry",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Cardiology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.766885",
+  "name": "Cardiology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Diabetology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.767321",
+  "name": "Diabetology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Dermatology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.767756",
+  "name": "Dermatology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Diagnostic Imaging",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.768188",
+  "name": "Diagnostic Imaging",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "ENT",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.768646",
+  "name": "ENT",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Gastroenterology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.769082",
+  "name": "Gastroenterology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "General Surgery",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.769514",
+  "name": "General Surgery",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Gynaecology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.769944",
+  "name": "Gynaecology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Haematology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.770371",
+  "name": "Haematology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Maternity",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.770794",
+  "name": "Maternity",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Microbiology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.771202",
+  "name": "Microbiology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Nephrology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.771606",
+  "name": "Nephrology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Neurology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.772008",
+  "name": "Neurology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Oncology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.772411",
+  "name": "Oncology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Orthopaedics",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.772819",
+  "name": "Orthopaedics",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Pathology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.773505",
+  "name": "Pathology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Physiotherapy",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.773874",
+  "name": "Physiotherapy",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Rheumatology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.774217",
+  "name": "Rheumatology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Serology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.774554",
+  "name": "Serology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Urology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 11:12:53.774862",
+  "name": "Urology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Ophthalmology",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 14:24:47.702824",
+  "name": "Ophthalmology",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Pharmacy",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 14:24:47.762197",
+  "name": "Pharmacy",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Laboratory",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 14:24:47.762984",
+  "name": "Laboratory",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "General Clinic",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 14:24:47.763674",
+  "name": "General Clinic",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ },
+ {
+  "department": "Optical Shop",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "modified": "2026-04-05 14:24:47.764387",
+  "name": "Optical Shop",
+  "patient_care_type": null,
+  "portal_image": null,
+  "show_in_portal": 0
+ }
+]

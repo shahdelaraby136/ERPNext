@@ -2,8 +2,10 @@
 
 A clean, calm, blue-medical visual language for ERPNext, optimised for fast scanning by doctors, reception, accounting, HR, and inventory users.
 
-- **Source of truth:** `custom_erp/public/css/custom_theme.css`
-- **Loaded by:** `custom_erp/hooks.py` → `app_include_css`
+- **Source files:**
+  - `custom_erp/public/css/custom_theme.css` — tokens + component skin
+  - `custom_erp/public/css/design-system.css` — layout (containers, grid, columns)
+- **Loaded by:** `custom_erp/hooks.py` → `app_include_css` (theme first, then layout)
 - **Scope:** Desk (logged-in app). Login page uses `login.css`. Dashboard uses `selling_dashboard.css`.
 
 ## Quick rules
@@ -14,6 +16,173 @@ A clean, calm, blue-medical visual language for ERPNext, optimised for fast scan
 | Semantic status colors (`--success`, `--error`) | Use red/green decoratively |
 | Class hooks (`.btn-primary`, `.is-clickable`) | Inline styles in JS pages |
 | 8px grid for layout, 4px for tight elements | Random gutters like `13px`, `19px` |
+| `.ds-container*` + `.ds-grid` + `.ds-col-N` for new pages | Bare `.col-*` (collides with Bootstrap/Frappe) |
+
+## 0. Layout — containers, grid, columns
+
+Defined in `design-system.css`. **Use these for every new custom page or section we author.** Existing ERPNext list/report views keep their full-width layout; only form pages get a targeted global cap.
+
+### Strict alignment rules (non-negotiable)
+
+> **Every section in a page must start and end on the EXACT same vertical lines.** A misaligned card edge is a design bug, not a stylistic choice.
+
+To guarantee this:
+
+1. **One container per page.** Pick `.ds-page` (or `.ds-container` / `.ds-container-form`) once at the top of the page and put every section inside it. Never mix containers within the same page.
+2. **No outer margins on sections.** A `<div class="ds-card">` inside `.ds-page` does NOT add `margin-left` or `margin-right`. Outer rhythm is owned by the wrapper.
+3. **Spacing lives INSIDE components.** Internal padding only — `16px` (default) or `24px` (spacious). Use `.ds-p-2` / `.ds-p-3` or token vars.
+4. **Snap to the grid.** Card widths come from `.ds-col-N` spans, not from custom widths.
+
+### `.ds-page` — the canonical wrapper
+
+This is the layout component you reuse on every new dashboard / custom page. It bundles the container + 24px outer padding + 24px vertical rhythm in one class.
+
+```html
+<div class="ds-page">
+  <header class="ds-page__header">
+    <div>
+      <h1 class="ds-page__title">Sales Pulse</h1>
+      <p  class="ds-page__subtitle">Today vs. last week</p>
+    </div>
+    <div class="ds-cluster">
+      <button class="btn btn-secondary">Filters</button>
+      <button class="btn btn-primary">New invoice</button>
+    </div>
+  </header>
+
+  <!-- Section 1: KPI cards -->
+  <section class="ds-grid">
+    <div class="ds-col-3 ds-col-md-6 ds-col-sm-12 widget ds-p-3">…</div>
+    <div class="ds-col-3 ds-col-md-6 ds-col-sm-12 widget ds-p-3">…</div>
+    <div class="ds-col-3 ds-col-md-6 ds-col-sm-12 widget ds-p-3">…</div>
+    <div class="ds-col-3 ds-col-md-6 ds-col-sm-12 widget ds-p-3">…</div>
+  </section>
+
+  <!-- Section 2: Revenue chart -->
+  <section class="widget ds-p-3">…</section>
+
+  <!-- Section 3: Recent orders table -->
+  <section class="widget ds-p-3">
+    <table class="table">…</table>
+  </section>
+</div>
+```
+
+All three sections above start at the same left edge and end at the same right edge — guaranteed by the wrapper. No section needs its own margin.
+
+### Containers (when not using `.ds-page`)
+
+| Class | Max width | Use for |
+|-------|-----------|---------|
+| `.ds-container` | **1280px** | Default — list/table/general pages |
+| `.ds-container-wide` | **1440px** | **Exceptional only** — very dense ops boards. Don't mix with `.ds-container` on the same page (edges won't align). |
+| `.ds-container-form` | **960px** | Forms, detail pages |
+
+> **Forms get the 960px cap automatically** via a targeted rule on `.page-form .form-layout`. To opt out (POS, item-grid quick entries, etc.), add `class="ds-form-fullwidth"` to the page wrapper.
+
+### Grid
+
+Always 12 underlying columns. **Gutter is always 16px** — the same value at every breakpoint. Container outer padding follows the spec rule (margin = appropriate to breakpoint).
+
+| Breakpoint | Columns shown | Gutter | Container padding |
+|-----------|---------------|--------|-------------------|
+| Desktop ≥ 992px | 12 | **16px** | 24px |
+| Tablet 768–991px | 8 effective (wide spans collapse) | **16px** | 24px |
+| Mobile < 768px | 4 effective (everything stacks) | **16px** | 16px |
+
+Why a constant 16px gutter? Because if the gutter shrinks at smaller breakpoints, the visible column edges *shift* and breakpoint transitions feel unstable. Constant gutter = predictable rhythm.
+
+### Columns
+
+```html
+<div class="ds-grid">
+  <section class="ds-col-8">Main</section>
+  <aside   class="ds-col-4">Side</aside>
+</div>
+```
+
+- `.ds-col-1` … `.ds-col-12` — desktop spans.
+- `.ds-col-md-1` … `.ds-col-md-12` — tablet override (kicks in <992px).
+- `.ds-col-sm-2|3|4|6|12` — mobile override (kicks in <768px).
+- `.ds-col-start-1` … `.ds-col-start-7` — start position for offset patterns.
+
+**Default responsive behaviour:**
+- On tablet, any column wider than 6 (i.e. `.ds-col-7` … `.ds-col-11`) collapses to full row.
+- On mobile, every column collapses to full row unless you supply a `.ds-col-sm-*` override.
+
+> **Why `.ds-col-*` instead of `.col-*`?**
+> Frappe/ERPNext core uses Bootstrap's `.col-*` classes throughout (form layouts, page heads, dialogs). Defining bare `.col-12 { grid-column: span 12 }` would silently break the desk. The `.ds-` prefix keeps our system collision-free.
+
+### Stack & cluster utilities
+
+For one-axis layouts that don't need a 12-column grid:
+
+```html
+<div class="ds-stack">         <!-- vertical, 24px gap -->
+  <div class="card">…</div>
+  <div class="card">…</div>
+</div>
+
+<div class="ds-cluster">       <!-- horizontal, wraps, 8px gap -->
+  <button class="btn btn-secondary">Filter</button>
+  <button class="btn btn-secondary">Export</button>
+</div>
+```
+
+Variants: `.ds-stack-sm|md|lg` (8/16/32), `.ds-cluster-md|lg` (16/24).
+
+### Spacing utilities
+
+The **only** spacing values allowed in the codebase are 4 / 8 / 16 / 24 / 32 / 48 px. Reach for these utilities or `var(--sp-*)`:
+
+| Class | Property | Value |
+|-------|----------|-------|
+| `.ds-p-{xs\|1\|2\|3\|4\|6}` | `padding` | 4 / 8 / 16 / 24 / 32 / 48 |
+| `.ds-px-{1\|2\|3\|4}` | `padding-inline` | 8 / 16 / 24 / 32 |
+| `.ds-py-{1\|2\|3\|4}` | `padding-block` | 8 / 16 / 24 / 32 |
+| `.ds-mt-{1\|2\|3\|4\|6}` | `margin-top` | 8 / 16 / 24 / 32 / 48 |
+| `.ds-mb-{1\|2\|3\|4\|6}` | `margin-bottom` | 8 / 16 / 24 / 32 / 48 |
+| `.ds-section`, `.ds-section--{sm\|md\|lg}` | `margin-block` | 24 / 32 / 48 |
+
+> **No horizontal margin utilities.** Horizontal centring is the container's job — don't fight it with `ml-*` / `mr-*`.
+
+### Page recipe
+
+```
+[ ERPNext Sidebar ] [ Navbar ]
+                    └─ <div class="ds-page">              ← canonical wrapper
+                         <header class="ds-page__header">…</header>
+                         <section class="ds-grid">         ← 12-col grid
+                           <div class="ds-col-3">…</div>
+                           <div class="ds-col-3">…</div>
+                           <div class="ds-col-3">…</div>
+                           <div class="ds-col-3">…</div>
+                         </section>
+                         <section class="widget">…</section>
+                         <section class="widget">…</section>
+                       </div>
+```
+
+### Page-type mapping
+
+| Page type | Wrapper | Reason |
+|-----------|---------|--------|
+| **Custom dashboard** | **`.ds-page`** (default) | One container, 1280px, perfect edge alignment |
+| Custom list / report | `.ds-page` or `.ds-container` | Same, just different idiomatic class |
+| Custom form / detail page | `.ds-container-form` (or rely on auto form cap) | 960px keeps fields readable on wide monitors |
+| Very dense ops board | `.ds-container-wide` (exceptional) | 1440px — only when you genuinely need the extra space |
+| Modal body | none | Modals are sized by `.modal-dialog` + radius tokens |
+| ERPNext core list/report | *unchanged* | Stays full-width — their tables benefit from horizontal real estate |
+| ERPNext core form | auto-capped at 960px | Major readability win for clinicians |
+
+### Visual validation — how to check alignment
+
+Open DevTools → Elements → hover the `.ds-page` element to see its outer rectangle. Every direct child should:
+- Start at the **same left edge** as `.ds-page`'s content box.
+- End at the **same right edge** as `.ds-page`'s content box.
+- Have **no horizontal margin** (the wrapper enforces `margin-inline: 0` on direct children).
+
+If a section sits inside its own `.col-*` from a Bootstrap row, refactor it into `.ds-grid` + `.ds-col-N`. Mixing systems is what breaks alignment.
 
 ## 1. Color tokens
 

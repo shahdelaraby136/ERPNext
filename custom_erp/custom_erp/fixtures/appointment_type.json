@@ -1,0 +1,106 @@
+[
+ {
+  "allow_booking_for": "Practitioner",
+  "appointment_type": "Consultation",
+  "codification_table": [],
+  "color": null,
+  "default_duration": 0,
+  "docstatus": 0,
+  "doctype": "Appointment Type",
+  "items": [
+   {
+    "dn": null,
+    "dt": null,
+    "inpatient_visit_charge": 0.0,
+    "inpatient_visit_charge_item": null,
+    "op_consulting_charge": 250.0,
+    "op_consulting_charge_item": "CONSULT-001"
+   },
+   {
+    "dn": null,
+    "dt": null,
+    "inpatient_visit_charge": 0.0,
+    "inpatient_visit_charge_item": null,
+    "op_consulting_charge": 250.0,
+    "op_consulting_charge_item": "CONSULT-001"
+   }
+  ],
+  "modified": "2026-04-05 15:32:53.430798",
+  "name": "Consultation",
+  "price_list": null
+ },
+ {
+  "allow_booking_for": "Practitioner",
+  "appointment_type": "Follow-up",
+  "codification_table": [],
+  "color": null,
+  "default_duration": 0,
+  "docstatus": 0,
+  "doctype": "Appointment Type",
+  "items": [
+   {
+    "dn": null,
+    "dt": null,
+    "inpatient_visit_charge": 0.0,
+    "inpatient_visit_charge_item": null,
+    "op_consulting_charge": 100.0,
+    "op_consulting_charge_item": "FOLLOWUP-001"
+   },
+   {
+    "dn": null,
+    "dt": null,
+    "inpatient_visit_charge": 0.0,
+    "inpatient_visit_charge_item": null,
+    "op_consulting_charge": 100.0,
+    "op_consulting_charge_item": "FOLLOWUP-001"
+   }
+  ],
+  "modified": "2026-04-05 15:32:53.496965",
+  "name": "Follow-up",
+  "price_list": null
+ },
+ {
+  "allow_booking_for": "Practitioner",
+  "appointment_type": "Eye Measurement",
+  "codification_table": [],
+  "color": null,
+  "default_duration": 0,
+  "docstatus": 0,
+  "doctype": "Appointment Type",
+  "items": [
+   {
+    "dn": null,
+    "dt": null,
+    "inpatient_visit_charge": 0.0,
+    "inpatient_visit_charge_item": null,
+    "op_consulting_charge": 150.0,
+    "op_consulting_charge_item": "EYE-MEASURE-001"
+   }
+  ],
+  "modified": "2026-04-05 15:32:53.500862",
+  "name": "Eye Measurement",
+  "price_list": null
+ },
+ {
+  "allow_booking_for": "Practitioner",
+  "appointment_type": "Lab Test",
+  "codification_table": [],
+  "color": null,
+  "default_duration": 0,
+  "docstatus": 0,
+  "doctype": "Appointment Type",
+  "items": [
+   {
+    "dn": null,
+    "dt": null,
+    "inpatient_visit_charge": 0.0,
+    "inpatient_visit_charge_item": null,
+    "op_consulting_charge": 200.0,
+    "op_consulting_charge_item": "LAB-BASIC-001"
+   }
+  ],
+  "modified": "2026-04-05 15:32:53.503811",
+  "name": "Lab Test",
+  "price_list": null
+ }
+]

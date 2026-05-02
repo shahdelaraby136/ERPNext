@@ -1,0 +1,210 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "umol/L",
+  "modified": "2026-04-05 11:12:53.860097",
+  "name": "umol/L",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "mg/L",
+  "modified": "2026-04-05 11:12:53.860673",
+  "name": "mg/L",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "mg / dl",
+  "modified": "2026-04-05 11:12:53.861174",
+  "name": "mg / dl",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "pg / ml",
+  "modified": "2026-04-05 11:12:53.862076",
+  "name": "pg / ml",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "U/ml",
+  "modified": "2026-04-05 11:12:53.862562",
+  "name": "U/ml",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "/HPF",
+  "modified": "2026-04-05 11:12:53.863051",
+  "name": "/HPF",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "Million Cells / cumm",
+  "modified": "2026-04-05 11:12:53.863532",
+  "name": "Million Cells / cumm",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "Lakhs Cells / cumm",
+  "modified": "2026-04-05 11:12:53.864022",
+  "name": "Lakhs Cells / cumm",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "U / L",
+  "modified": "2026-04-05 11:12:53.864524",
+  "name": "U / L",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "g / L",
+  "modified": "2026-04-05 11:12:53.865023",
+  "name": "g / L",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "IU / ml",
+  "modified": "2026-04-05 11:12:53.865525",
+  "name": "IU / ml",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "gm %",
+  "modified": "2026-04-05 11:12:53.866020",
+  "name": "gm %",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "Microgram",
+  "modified": "2026-04-05 11:12:53.866521",
+  "name": "Microgram",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "Micron",
+  "modified": "2026-04-05 11:12:53.867022",
+  "name": "Micron",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "Cells / cumm",
+  "modified": "2026-04-05 11:12:53.867520",
+  "name": "Cells / cumm",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "%",
+  "modified": "2026-04-05 11:12:53.868045",
+  "name": "%",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "mm / dl",
+  "modified": "2026-04-05 11:12:53.868549",
+  "name": "mm / dl",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "mm / hr",
+  "modified": "2026-04-05 11:12:53.869049",
+  "name": "mm / hr",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "ulU / ml",
+  "modified": "2026-04-05 11:12:53.869549",
+  "name": "ulU / ml",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "ng / ml",
+  "modified": "2026-04-05 11:12:53.870043",
+  "name": "ng / ml",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "ng / dl",
+  "modified": "2026-04-05 11:12:53.870539",
+  "name": "ng / dl",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "ug / dl",
+  "modified": "2026-04-05 11:12:53.871039",
+  "name": "ug / dl",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "x10^3/uL",
+  "modified": "2026-04-05 16:03:39.203249",
+  "name": "x10^3/uL",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "x10^6/uL",
+  "modified": "2026-04-05 16:03:39.255448",
+  "name": "x10^6/uL",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "g/dL",
+  "modified": "2026-04-05 16:03:39.256279",
+  "name": "g/dL",
+  "uom_description": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Lab Test UOM",
+  "lab_test_uom": "mg/dL",
+  "modified": "2026-04-05 16:03:39.257021",
+  "name": "mg/dL",
+  "uom_description": null
+ }
+]

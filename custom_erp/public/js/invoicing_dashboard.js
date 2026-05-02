@@ -37,25 +37,20 @@
 	// ---------- inline CSS — hide native workspace under our render ----------
 	function injectStyles() {
 		if (document.getElementById("ce-inv-styles")) return;
+		// Layout owned by design-system.css via .ds-container + .ds-grid.
+		// Only "hide native + free up the main section" rules live here.
 		const css = `
 			body.ce-inv-active .layout-main-section > *:not(.ce-inv-root) { display: none !important; }
 			body.ce-inv-active .ce-inv-root { display: block !important; }
 			.layout-main-section:has(> .ce-inv-root) > :not(.ce-inv-root) { display: none !important; }
 			.ce-inv-root { padding-bottom: var(--sp-6); }
 
-			/* Full-width override */
 			body.ce-inv-active .container.page-container,
 			body.ce-inv-active .page-container,
 			body.ce-inv-active .layout-main,
 			body.ce-inv-active .layout-main-section,
 			body.ce-inv-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
-			body.ce-inv-active .ce-inv-root .ce-hero-inner,
-			body.ce-inv-active .ce-inv-root .ce-section,
-			body.ce-inv-active .ce-inv-root .ce-split,
-			body.ce-inv-active .ce-inv-root .ce-stats,
-			body.ce-inv-active .ce-inv-root .ce-quick-grid { max-width: none !important; width: auto !important; }
-			body.ce-inv-active .ce-inv-root .ce-section { padding-left: var(--sp-3); padding-right: var(--sp-3); }
-			body.ce-inv-active .ce-inv-root .ce-hero { padding-left: var(--sp-3); padding-right: var(--sp-3); }
+			body.ce-inv-active .ds-container { max-width: 1600px !important; }
 		`;
 		const style = document.createElement("style");
 		style.id = "ce-inv-styles";
@@ -121,57 +116,63 @@
 
 		root.innerHTML = `
 			<div class="ce-hero ce-hero-acc">
-				<div class="ce-hero-inner">
-					<div class="ce-hero-text">
-						<div class="ce-hero-eyebrow">${esc(t("Invoicing"))}</div>
-						<h1 class="ce-hero-title">${esc(t("Invoicing Hub"))}</h1>
-						<div class="ce-hero-sub">${esc(todayPretty)}</div>
-					</div>
-					<div class="ce-hero-actions">
-						<button class="btn btn-light ce-hero-btn" data-action="new-sales-invoice">
-							<span class="ce-ic">🧾</span> ${esc(t("Sales Invoice"))}
-						</button>
-						<button class="btn btn-light ce-hero-btn" data-action="new-purchase-invoice">
-							<span class="ce-ic">📥</span> ${esc(t("Purchase Invoice"))}
-						</button>
-						<button class="btn btn-light ce-hero-btn" data-action="new-payment">
-							<span class="ce-ic">💳</span> ${esc(t("Payment Entry"))}
-						</button>
+				<div class="ds-container">
+					<div class="ce-hero-inner">
+						<div class="ce-hero-text">
+							<div class="ce-hero-eyebrow">${esc(t("Invoicing"))}</div>
+							<h1 class="ce-hero-title">${esc(t("Invoicing Hub"))}</h1>
+							<div class="ce-hero-sub">${esc(todayPretty)}</div>
+						</div>
+						<div class="ce-hero-actions">
+							<button class="btn btn-light ce-hero-btn" data-action="new-sales-invoice">
+								<span class="ce-ic">🧾</span> ${esc(t("Sales Invoice"))}
+							</button>
+							<button class="btn btn-light ce-hero-btn" data-action="new-purchase-invoice">
+								<span class="ce-ic">📥</span> ${esc(t("Purchase Invoice"))}
+							</button>
+							<button class="btn btn-light ce-hero-btn" data-action="new-payment">
+								<span class="ce-ic">💳</span> ${esc(t("Payment Entry"))}
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="ce-section">
-				<div class="ce-section-head">${esc(t("Financial snapshot"))}</div>
-				<div class="ce-stats" id="ce-inv-stats"></div>
-			</div>
+			<div class="ds-container">
+				<section class="ds-section--md">
+					<div class="ce-section-head">${esc(t("Financial snapshot"))}</div>
+					<div class="ds-grid" id="ce-inv-stats"></div>
+				</section>
 
-			<div class="ce-section">
-				<div class="ce-section-head">${esc(t("Quick actions"))}</div>
-				<div class="ce-quick-grid" id="ce-inv-quick"></div>
-			</div>
+				<section class="ds-section--md">
+					<div class="ce-section-head">${esc(t("Quick actions"))}</div>
+					<div class="ds-grid" id="ce-inv-quick"></div>
+				</section>
 
-			<div class="ce-split">
-				<div class="ce-panel">
-					<div class="ce-panel-head">
-						<div class="ce-panel-title">${esc(t("Overdue sales invoices"))}</div>
-						<a class="ce-panel-link" href="/app/sales-invoice?status=Overdue">${esc(t("View all"))} →</a>
+				<section class="ds-section--md">
+					<div class="ds-grid">
+						<div class="ds-col-8 ce-panel">
+							<div class="ce-panel-head">
+								<div class="ce-panel-title">${esc(t("Overdue sales invoices"))}</div>
+								<a class="ce-panel-link" href="/app/sales-invoice?status=Overdue">${esc(t("View all"))} →</a>
+							</div>
+							<div class="ce-panel-body" id="ce-inv-overdue">
+								<div class="ce-skeleton"></div>
+								<div class="ce-skeleton"></div>
+							</div>
+						</div>
+						<div class="ds-col-4 ce-panel">
+							<div class="ce-panel-head">
+								<div class="ce-panel-title">${esc(t("Recent payments"))}</div>
+								<a class="ce-panel-link" href="/app/payment-entry">${esc(t("View all"))} →</a>
+							</div>
+							<div class="ce-panel-body" id="ce-inv-payments">
+								<div class="ce-skeleton"></div>
+								<div class="ce-skeleton"></div>
+							</div>
+						</div>
 					</div>
-					<div class="ce-panel-body" id="ce-inv-overdue">
-						<div class="ce-skeleton"></div>
-						<div class="ce-skeleton"></div>
-					</div>
-				</div>
-				<div class="ce-panel">
-					<div class="ce-panel-head">
-						<div class="ce-panel-title">${esc(t("Recent payments"))}</div>
-						<a class="ce-panel-link" href="/app/payment-entry">${esc(t("View all"))} →</a>
-					</div>
-					<div class="ce-panel-body" id="ce-inv-payments">
-						<div class="ce-skeleton"></div>
-						<div class="ce-skeleton"></div>
-					</div>
-				</div>
+				</section>
 			</div>
 		`;
 
@@ -200,7 +201,7 @@
 		const wrap = root.querySelector("#ce-inv-stats");
 		stats.forEach(s => {
 			wrap.insertAdjacentHTML("beforeend", `
-				<a class="ce-stat ce-stat-${s.tone}" href="${esc(s.href)}">
+				<a class="ds-col-3 ce-stat ce-stat-${s.tone}" href="${esc(s.href)}">
 					<div class="ce-stat-icon">${s.icon}</div>
 					<div class="ce-stat-body">
 						<div class="ce-stat-label">${esc(s.label)}</div>
@@ -233,8 +234,10 @@
 			{ label: t("Reports"),           icon: "📈",  tone: "green",  href: "/app/query-report/Accounts%20Receivable" },
 		];
 		const wrap = root.querySelector("#ce-inv-quick");
+		// 8 modules at ds-col-3 → 4 per row × 2 rows. Cards line up exactly
+		// under the 4 KPI cards above (same 12-col grid).
 		wrap.innerHTML = actions.map(a => `
-			<a class="ce-quick ce-quick-${a.tone}" href="${esc(a.href)}">
+			<a class="ds-col-3 ce-quick ce-quick-${a.tone}" href="${esc(a.href)}">
 				<div class="ce-quick-icon">${a.icon}</div>
 				<div class="ce-quick-label">${esc(a.label)}</div>
 			</a>
