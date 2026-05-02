@@ -1,72 +1,107 @@
 /* ==========================================================================
-   Custom ERP — Medical Dashboard Design System
-   Professional healthcare UI. Blue primary. Light surfaces. 8px grid.
+   Custom ERP — Healthcare Design System
+   Blue medical identity. Calm, trustworthy, enterprise.
+   8px grid. Inter (LTR) + IBM Plex Sans Arabic (RTL).
+
+   How to consume:
+   - Use CSS variables defined here (--primary, --sp-*, --radius, --t-*).
+   - Don't hardcode hex values in component code.
+   - For new components, follow the rules in DESIGN_SYSTEM.md.
    ========================================================================== */
+
+/* Web fonts — Inter (Latin) + IBM Plex Sans Arabic (Arabic).
+   Loaded once, used by --font-stack-latin / --font-stack-arabic. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap");
 
 /* ---- 1. Design tokens ------------------------------------------------- */
 :root,
 [data-theme="light"],
 [data-theme="dark"] {
-  /* Brand */
-  --primary:        #2563eb;
-  --primary-hover:  #1d4ed8;
-  --primary-light:  #DBEAFE;
-  --primary-50:     #EFF6FF;
+  /* ── Brand ─────────────────────────────────────────────────────────── */
+  --primary:        #2563EB;   /* Primary Blue */
+  --primary-hover:  #1D4ED8;   /* Primary Hover */
+  --primary-light:  #DBEAFE;   /* Primary Light (active bg, soft fills) */
+  --primary-50:     #EFF6FF;   /* Hero/page tint */
   --primary-soft:   rgba(37, 99, 235, 0.10);
 
-  /* Surfaces */
-  --bg:             #F8FAFC;
-  --surface:        #FFFFFF;
-  --surface-2:      #F1F5F9;
-  --surface-3:      #E2E8F0;
+  /* Accent — used sparingly for secondary highlights, charts, tags */
+  --accent-teal:        #14B8A6;
+  --accent-teal-soft:   rgba(20, 184, 166, 0.12);
 
-  /* Borders */
-  --border:         #E2E8F0;
-  --border-strong:  #CBD5E1;
+  /* ── Surfaces ──────────────────────────────────────────────────────── */
+  --bg:             #F8FAFC;   /* Background */
+  --surface:        #FFFFFF;   /* Surface / Card */
+  --surface-2:      #F1F5F9;   /* Subtle row hover, table head */
+  --surface-3:      #E2E8F0;   /* Skeleton highlight */
 
-  /* Text */
-  --text-primary:   #0F172A;
-  --text-secondary: #64748B;
-  --text-muted:     #94A3B8;
+  /* ── Borders ───────────────────────────────────────────────────────── */
+  --border:         #E2E8F0;   /* Default border */
+  --border-strong:  #CBD5E1;   /* Stronger border (focus rest, scrollbar) */
+
+  /* ── Text ──────────────────────────────────────────────────────────── */
+  --text-primary:   #0F172A;   /* Body / headings */
+  --text-secondary: #64748B;   /* Captions, helper text, labels */
+  --text-muted:     #94A3B8;   /* Placeholder */
   --text-on-primary:#FFFFFF;
 
-  /* Status (medical) */
-  --success: #10B981;  --success-soft: rgba(16, 185, 129, 0.12);
-  --warning: #F59E0B;  --warning-soft: rgba(245, 158, 11, 0.12);
-  --danger:  #EF4444;  --danger-soft:  rgba(239, 68, 68, 0.12);
-  --info:    #3B82F6;  --info-soft:    rgba(59, 130, 246, 0.12);
+  /* ── Status (semantic — never decorative) ──────────────────────────── */
+  --success:      #16A34A;     --success-soft: rgba(22, 163, 74, 0.12);
+  --warning:      #F59E0B;     --warning-soft: rgba(245, 158, 11, 0.12);
+  --error:        #DC2626;     --error-soft:   rgba(220, 38, 38, 0.12);
+  --info:         #0EA5E9;     --info-soft:    rgba(14, 165, 233, 0.12);
 
-  /* Spacing — strict 8px scale */
-  --sp-1: 8px;   --sp-2: 16px;  --sp-3: 24px;
-  --sp-4: 32px;  --sp-5: 40px;  --sp-6: 48px;
+  /* Back-compat aliases — keep older selectors (.btn-danger, .alert-danger,
+     --danger-soft references) working without churn. */
+  --danger:       var(--error);
+  --danger-soft:  var(--error-soft);
 
-  /* Typography sizes */
+  /* ── Spacing — strict 8px scale + 4px xs ──────────────────────────── */
+  --sp-xs: 4px;
+  --sp-1:  8px;   /* sm  */
+  --sp-2:  16px;  /* md  */
+  --sp-3:  24px;  /* lg  */
+  --sp-4:  32px;  /* xl  */
+  --sp-5:  40px;
+  --sp-6:  48px;  /* section */
+
+  /* ── Typography sizes ─────────────────────────────────────────────── */
   --text-h1:   32px;
   --text-h2:   24px;
   --text-h3:   20px;
-  --text-body: 16px;
-  --text-sm:   14px;
-  --text-xs:   12px;
+  --text-body: 16px;   /* default body */
+  --text-sm:   14px;   /* dense rows / form controls */
+  --text-xs:   12px;   /* labels, eyebrows, helper */
 
   /* Line heights */
   --lh-tight: 1.2;
   --lh-base:  1.5;
   --lh-loose: 1.65;
 
-  /* Radius */
+  /* ── Radius ────────────────────────────────────────────────────────── */
   --radius-sm: 6px;
-  --radius:    8px;
-  --radius-lg: 12px;
+  --radius:    8px;    /* buttons, inputs */
+  --radius-lg: 12px;   /* cards, modals */
 
-  /* Shadows — soft, subtle (medical UIs avoid heavy depth) */
+  /* ── Shadows — soft, subtle (medical UIs avoid heavy depth) ────────── */
   --shadow-sm:    0 1px 2px 0 rgba(15, 23, 42, 0.04);
   --shadow-card:  0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
   --shadow-hover: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
   --shadow-modal: 0 16px 40px -8px rgba(15, 23, 42, 0.16);
+  --focus-ring:   0 0 0 3px var(--primary-soft);
 
-  /* Font */
-  --font-stack: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
-                "Helvetica Neue", Arial, sans-serif;
+  /* ── Motion tokens — subtle, enterprise ───────────────────────────── */
+  --t-fast:  120ms;
+  --t-base:  160ms;
+  --t-slow:  220ms;
+  --ease:    cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Fonts — bilingual stack ──────────────────────────────────────── */
+  --font-stack-latin:  "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+                       "Helvetica Neue", Arial, sans-serif;
+  --font-stack-arabic: "IBM Plex Sans Arabic", "Inter", "Segoe UI",
+                       -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Default to Latin; RTL override below switches to Arabic. */
+  --font-stack:        var(--font-stack-latin);
 
   /* Frappe variable overrides */
   --primary-color:         var(--primary);
@@ -539,6 +574,8 @@ h4, .h4 {
 .widget .widget-subtitle, .widget-foot { color: var(--text-secondary) !important; }
 
 /* ---- 8. Forms — inputs, labels, layout -------------------------------- */
+/* Inputs sit at 40px to align with buttons. Inside dense table cells,
+   form-control auto-shrinks via Frappe's grid styles — that path is fine. */
 .form-control, .input-with-feedback, .awesomplete > input, .like-disabled-input,
 select.form-control, textarea.form-control,
 .input-area input, .input-area textarea, .input-area select {
@@ -546,20 +583,29 @@ select.form-control, textarea.form-control,
   border: 1px solid var(--border) !important;
   border-radius: var(--radius) !important;
   color: var(--text-primary) !important;
-  padding: 8px 12px !important;
+  padding: 10px 12px !important;
   font-size: var(--text-sm) !important;
   line-height: 1.4 !important;
   box-shadow: none !important;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
+  transition: border-color var(--t-fast) var(--ease),
+              box-shadow  var(--t-fast) var(--ease);
   height: auto !important;
-  min-height: 32px;
+  min-height: 40px;                     /* spec: align with buttons */
 }
-textarea.form-control { min-height: 80px; padding: 8px 12px !important; }
+textarea.form-control { min-height: 96px; padding: 10px 12px !important; }
+.form-control:hover { border-color: var(--border-strong) !important; }
 .form-control:focus, .input-with-feedback:focus, .awesomplete > input:focus,
 select.form-control:focus, textarea.form-control:focus {
   border-color: var(--primary) !important;
-  box-shadow: 0 0 0 3px var(--primary-soft) !important;
+  box-shadow: var(--focus-ring) !important;
   outline: none !important;
+}
+/* Error state — paired with .has-error wrapper (Frappe convention) */
+.has-error .form-control,
+.form-control.has-error,
+.form-control[aria-invalid="true"] {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 3px var(--error-soft) !important;
 }
 .form-control::placeholder, textarea.form-control::placeholder {
   color: var(--text-muted) !important;
@@ -591,22 +637,34 @@ select.form-control:focus, textarea.form-control:focus {
 input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
 .checkbox label, .radio label { color: var(--text-primary) !important; }
 
-/* ---- 9. Buttons — compact 8px 16px primary, density-friendly ------- */
+/* ---- 9. Buttons — 40px height, primary/secondary/ghost/danger ------- */
 .btn {
   border-radius: var(--radius) !important;
   font-weight: 500 !important;
   font-size: var(--text-sm) !important;
   letter-spacing: -0.005em;
   line-height: 1.2 !important;
-  padding: 8px 16px !important;
-  min-height: 32px;
-  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  padding: 10px 16px !important;
+  min-height: 40px;                     /* spec: ~40px touch-friendly */
+  transition: background-color var(--t-fast) var(--ease),
+              color           var(--t-fast) var(--ease),
+              border-color    var(--t-fast) var(--ease),
+              box-shadow      var(--t-fast) var(--ease),
+              transform       var(--t-fast) var(--ease);
   border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-1);
 }
-.btn-lg { padding: 16px 24px !important; font-size: var(--text-body) !important; min-height: 48px; }
-.btn-sm { padding: 8px 12px !important; font-size: var(--text-xs) !important; min-height: 24px; }
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring) !important;
+}
+.btn-lg { padding: 14px 24px !important; font-size: var(--text-body) !important; min-height: 48px; }
+.btn-sm { padding: 8px 12px  !important; font-size: var(--text-xs)  !important; min-height: 32px; }
 
-/* Primary */
+/* Primary — solid blue */
 .btn-primary {
   background-color: var(--primary) !important;
   border-color: var(--primary) !important;
@@ -620,16 +678,17 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
   color: #FFFFFF !important;
   box-shadow: 0 2px 6px rgba(37, 99, 235, 0.30);
 }
-.btn-primary:active { transform: translateY(1px); box-shadow: none; }
+.btn-primary:active            { transform: scale(0.98); box-shadow: none; }   /* spec */
 .btn-primary:disabled, .btn-primary.disabled {
   background-color: var(--primary-light) !important;
   border-color: var(--primary-light) !important;
   color: var(--text-muted) !important;
   cursor: not-allowed;
   box-shadow: none !important;
+  transform: none !important;
 }
 
-/* Secondary / Default — outline */
+/* Secondary / Default — outlined neutral */
 .btn-secondary, .btn-default {
   background-color: var(--surface) !important;
   border: 1px solid var(--border) !important;
@@ -640,7 +699,7 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
   border-color: var(--border-strong) !important;
   color: var(--text-primary) !important;
 }
-.btn-secondary:active, .btn-default:active { transform: translateY(1px); }
+.btn-secondary:active, .btn-default:active { transform: scale(0.98); }
 .btn-secondary:disabled, .btn-default:disabled, .btn-secondary.disabled {
   background-color: var(--surface-2) !important;
   border-color: var(--border) !important;
@@ -648,15 +707,46 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
   cursor: not-allowed;
 }
 
+/* Ghost — text-button look for low-emphasis actions */
+.btn-ghost, .btn-link {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: var(--primary) !important;
+  box-shadow: none !important;
+}
+.btn-ghost:hover, .btn-link:hover {
+  background-color: var(--primary-light) !important;
+  color: var(--primary-hover) !important;
+  text-decoration: none !important;
+}
+.btn-ghost:active, .btn-link:active { transform: scale(0.98); }
+
+/* Danger — solid red, used for destructive actions */
+.btn-danger {
+  background-color: var(--error) !important;
+  border-color: var(--error) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 2px rgba(220, 38, 38, 0.25);
+}
+.btn-danger:hover, .btn-danger:focus {
+  background-color: #B91C1C !important;
+  border-color: #B91C1C !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.30);
+}
+.btn-danger:active { transform: scale(0.98); box-shadow: none; }
+
 /* Generic disabled fallback */
 .btn:disabled, .btn.disabled, .btn[disabled] {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.6;
+  transform: none !important;
 }
 
 .btn-success { background-color: var(--success) !important; border-color: var(--success) !important; color: #FFF !important; }
-.btn-danger  { background-color: var(--danger)  !important; border-color: var(--danger)  !important; color: #FFF !important; }
 .btn-warning { background-color: var(--warning) !important; border-color: var(--warning) !important; color: #FFF !important; }
+.btn-success:active, .btn-warning:active { transform: scale(0.98); }
 
 /* ---- 10. Filter pills -------------------------------------------------- */
 .filter-list .btn, .filter-selector .btn {
@@ -756,8 +846,8 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
   font-size: var(--text-xs);
 }
 .indicator-pill.blue, .indicator.blue   { background: var(--primary-light) !important; color: var(--primary-hover) !important; }
-.indicator-pill.green, .indicator.green { background: var(--success-soft)  !important; color: #047857 !important; }
-.indicator-pill.red, .indicator.red     { background: var(--danger-soft)   !important; color: #B91C1C !important; }
+.indicator-pill.green, .indicator.green { background: var(--success-soft)  !important; color: #15803D !important; }
+.indicator-pill.red, .indicator.red     { background: var(--error-soft)    !important; color: #B91C1C !important; }
 .indicator-pill.orange, .indicator.orange,
 .indicator-pill.yellow, .indicator.yellow { background: var(--warning-soft) !important; color: #B45309 !important; }
 .indicator-pill.gray, .indicator.gray   { background: var(--surface-2) !important; color: var(--text-secondary) !important; }
@@ -923,9 +1013,10 @@ a:hover { color: var(--primary-hover); text-decoration: none; }
   color: var(--text-primary) !important;
   padding: var(--sp-2) !important;
 }
-.alert-success { background-color: var(--success-soft) !important; border-color: rgba(16,185,129,0.3) !important; color: #047857 !important; }
-.alert-danger  { background-color: var(--danger-soft)  !important; border-color: rgba(239,68,68,0.3)  !important; color: #B91C1C !important; }
-.alert-warning { background-color: var(--warning-soft) !important; border-color: rgba(245,158,11,0.3) !important; color: #B45309 !important; }
+.alert-success { background-color: var(--success-soft) !important; border-color: rgba(22,163,74,0.30) !important; color: #15803D !important; }
+.alert-danger  { background-color: var(--error-soft)   !important; border-color: rgba(220,38,38,0.30) !important; color: #B91C1C !important; }
+.alert-warning { background-color: var(--warning-soft) !important; border-color: rgba(245,158,11,0.30) !important; color: #B45309 !important; }
+.alert-info    { background-color: var(--info-soft)    !important; border-color: rgba(14,165,233,0.30) !important; color: #075985 !important; }
 .progress { border-radius: 999px !important; background-color: var(--surface-2) !important; height: 8px !important; }
 .progress-bar { background-color: var(--primary) !important; border-radius: 999px; }
 hr { border-color: var(--border); }
@@ -1217,10 +1308,11 @@ hr { border-color: var(--border); }
 
 /* Stat tones — use status colors for varied indicators */
 .ce-stat-indigo .ce-stat-icon { background: var(--primary-light); color: var(--primary); }
-.ce-stat-teal   .ce-stat-icon { background: var(--success-soft); color: #047857; }
+.ce-stat-teal   .ce-stat-icon { background: var(--accent-teal-soft); color: var(--accent-teal); }
 .ce-stat-violet .ce-stat-icon { background: var(--info-soft); color: var(--info); }
 .ce-stat-amber  .ce-stat-icon { background: var(--warning-soft); color: #B45309; }
-.ce-stat-rose   .ce-stat-icon { background: var(--danger-soft); color: #B91C1C; }
+.ce-stat-rose   .ce-stat-icon { background: var(--error-soft); color: #B91C1C; }
+.ce-stat-green  .ce-stat-icon { background: var(--success-soft); color: #15803D; }
 .ce-stat-slate  .ce-stat-icon { background: var(--surface-2); color: var(--text-secondary); }
 
 /* -- Quick actions (compact) -- */
@@ -1271,10 +1363,11 @@ hr { border-color: var(--border); }
   color: inherit;
 }
 .ce-quick-indigo .ce-quick-icon { background: var(--primary-light); color: var(--primary); }
-.ce-quick-teal   .ce-quick-icon { background: var(--success-soft); color: #047857; }
+.ce-quick-teal   .ce-quick-icon { background: var(--accent-teal-soft); color: var(--accent-teal); }
 .ce-quick-violet .ce-quick-icon { background: var(--info-soft); color: var(--info); }
 .ce-quick-amber  .ce-quick-icon { background: var(--warning-soft); color: #B45309; }
-.ce-quick-rose   .ce-quick-icon { background: var(--danger-soft); color: #B91C1C; }
+.ce-quick-rose   .ce-quick-icon { background: var(--error-soft); color: #B91C1C; }
+.ce-quick-green  .ce-quick-icon { background: var(--success-soft); color: #15803D; }
 .ce-quick-slate  .ce-quick-icon { background: var(--surface-2); color: var(--text-secondary); }
 
 /* -- Split panels (compact) -- */
@@ -1371,8 +1464,9 @@ hr { border-color: var(--border); }
   text-transform: capitalize;
   letter-spacing: 0.01em;
 }
-.ce-pill-green  { background: var(--success-soft); color: #047857; }
-.ce-pill-red    { background: var(--danger-soft); color: #B91C1C; }
+.ce-pill-green  { background: var(--success-soft); color: #15803D; }
+.ce-pill-red    { background: var(--error-soft); color: #B91C1C; }
+.ce-pill-teal   { background: var(--accent-teal-soft); color: var(--accent-teal); }
 .ce-pill-indigo { background: var(--primary-light); color: var(--primary-hover); }
 .ce-pill-amber  { background: var(--warning-soft); color: #B45309; }
 .ce-pill-gray   { background: var(--surface-2); color: var(--text-secondary); }
@@ -1396,4 +1490,91 @@ hr { border-color: var(--border); }
   .ce-hero { padding: var(--sp-3) var(--sp-2); }
   .ce-hero-title { font-size: var(--text-h2) !important; }
   .ce-section, .ce-split { padding-left: var(--sp-2); padding-right: var(--sp-2); }
+}
+
+/* ==========================================================================
+   17. Cross-cutting refinements (focus, clickable lift, RTL, motion guard)
+   These rules sit at the end so they win cascade ties without !important spam.
+   ========================================================================== */
+
+/* Visible keyboard focus ring on every interactive control.
+   Only applies when keyboard-driven (not mouse), so it doesn't add noise. */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+.dropdown-item:focus-visible,
+.list-row-container:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: none !important;
+  box-shadow: var(--focus-ring) !important;
+  border-radius: var(--radius);
+}
+
+/* Clickable cards — opt-in lift on hover. Add class .is-clickable
+   (or rely on <a class="ce-stat">) to get a subtle translateY(-2px). */
+.is-clickable,
+a.widget,
+a.dashboard-widget-box,
+a.number-card,
+a.shortcut-widget-box,
+.ce-stat,
+.ce-quick {
+  cursor: pointer;
+}
+.is-clickable:hover,
+a.widget:hover,
+a.dashboard-widget-box:hover,
+a.number-card:hover,
+a.shortcut-widget-box:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover) !important;
+}
+.ce-stat:hover, .ce-quick:hover { transform: translateY(-2px); }
+
+/* RTL / Arabic — switch font + use logical-direction-friendly stack.
+   Frappe sets <html dir="rtl"> on Arabic locale. */
+html[dir="rtl"],
+html[lang^="ar"],
+[dir="rtl"] body,
+[dir="rtl"] .desk-body,
+[dir="rtl"] .layout-main,
+[dir="rtl"] .navbar,
+[dir="rtl"] .btn,
+[dir="rtl"] .form-control,
+[dir="rtl"] .modal-dialog {
+  font-family: var(--font-stack-arabic) !important;
+}
+/* Sidebar active indicator — flip 3px inset to the opposite side in RTL. */
+[dir="rtl"] .body-sidebar .standard-sidebar-item.selected,
+[dir="rtl"] .body-sidebar .standard-sidebar-item.active,
+[dir="rtl"] .body-sidebar .standard-sidebar-item.active-sidebar,
+[dir="rtl"] .body-sidebar .sidebar-item.selected,
+[dir="rtl"] .body-sidebar .sidebar-item.active,
+[dir="rtl"] .layout-side-section .sidebar-item.selected,
+[dir="rtl"] .layout-side-section .sidebar-item.active,
+[dir="rtl"] .layout-side-section .standard-sidebar-item.active {
+  box-shadow: inset -3px 0 0 var(--primary) !important;
+}
+
+/* Reduced-motion — respect user OS setting.
+   Animations collapse to near-instant; states still change for clarity. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .desktop-icon:hover,
+  .ce-stat:hover,
+  .ce-quick:hover,
+  .is-clickable:hover,
+  .btn-primary:active,
+  .btn-secondary:active,
+  .btn-default:active,
+  .btn-danger:active,
+  .btn-ghost:active {
+    transform: none !important;
+  }
 }

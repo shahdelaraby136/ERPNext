@@ -1,0 +1,360 @@
+/* ==========================================================================
+   Custom ERP — Workspace Layout Polish
+   Applies to every Desk workspace page. Pairs with custom_theme.css and
+   uses its tokens (--primary, --sp-*, --radius-*, --t-*).
+
+   Goals:
+   - Predictable vertical rhythm between Editor.js blocks
+   - Clear section hierarchy (header → content → next section)
+   - Number cards / charts / shortcuts feel deliberate, not floating
+   - Link cards become scannable rows, not bare bullet lists
+   - Empty / setup states read as info, not as errors
+   ========================================================================== */
+
+/* ---- 1. Page container & rhythm ------------------------------------- */
+.layout-main-section.workspace,
+.workspace-container,
+.codex-editor {
+  background-color: var(--bg);
+}
+
+.layout-main-section.workspace .codex-editor,
+.workspace-container .codex-editor {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--sp-3);
+  padding-bottom: var(--sp-6);
+}
+
+/* Spacing between Editor.js blocks — predictable rhythm */
+.codex-editor .ce-block {
+  padding-block: var(--sp-1);
+}
+
+/* Spacer block — make sure it actually creates breathable space */
+.codex-editor .ce-block.spacer-block,
+.codex-editor .ce-block .spacer-widget-box {
+  min-height: var(--sp-3);
+}
+
+/* Block content alignment — keep consistent inside the editor */
+.codex-editor .ce-block__content {
+  max-width: none;
+  margin: 0;
+}
+
+/* ---- 2. Section header blocks (h1/h2/h3 inside workspace) ----------- */
+/* Editor.js inserts <h2>/<h3> for workspace section titles. Give them a
+   real "section break" feel: top air, bottom rule, tighter color. */
+.codex-editor .ce-block .ce-header,
+.workspace-container h2.ce-header,
+.workspace-container h3.ce-header,
+.workspace-container .ce-block h2,
+.workspace-container .ce-block h3,
+.workspace-container .ce-block h4 {
+  margin-top: var(--sp-4);
+  margin-bottom: var(--sp-2);
+  padding-bottom: var(--sp-1);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* The very first header in a workspace shouldn't push the page down */
+.codex-editor .ce-block:first-child .ce-header,
+.codex-editor .ce-block:first-child h2,
+.codex-editor .ce-block:first-child h3 {
+  margin-top: 0;
+}
+
+/* Optional eyebrow utility — content authors can wrap text in this for an
+   uppercase label above a section. Used as <span class="ws-eyebrow">…</span>. */
+.ws-eyebrow {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-xs);
+}
+
+/* ---- 3. Number cards (KPI strip) ------------------------------------ */
+/* The default Frappe number-card is anaemic. Give it real visual weight:
+   stable height, balanced internal layout, accent stripe on hover, and
+   tabular numerals so adjacent KPIs line up cleanly. */
+.number-card,
+.number-card-widget-box,
+.widget.number-card {
+  position: relative;
+  min-height: 116px;
+  padding: var(--sp-3) var(--sp-2) !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.number-card::before,
+.number-card-widget-box::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease);
+  pointer-events: none;
+}
+.number-card:hover::before,
+.number-card-widget-box:hover::before {
+  opacity: 1;
+}
+
+/* Label — uppercase eyebrow style to match design system tone */
+.number-card .number-card-name,
+.number-card-widget-box .widget-title {
+  text-transform: uppercase;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-1);
+}
+
+/* The big number — tabular nums for column alignment, tight tracking */
+.number-card .widget-body .number,
+.number-card-widget-box .widget-body .number {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--text-primary) !important;
+  line-height: 1.1;
+}
+
+/* Currency / unit suffix row — small, muted */
+.number-card .widget-body .currency,
+.number-card .widget-body .unit,
+.number-card-widget-box .widget-body .summary-message {
+  color: var(--text-secondary) !important;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  margin-top: var(--sp-xs);
+}
+
+/* ---- 4. Chart cards — friendlier empty / setup state ---------------- */
+.chart-container,
+.dashboard-chart-container,
+.widget.chart-widget-box {
+  min-height: 280px;
+}
+
+/* Frappe renders empty/error messages inline. Soften them so they don't
+   read like a system error. */
+.chart-container .chart-empty-state,
+.dashboard-chart-container .chart-empty-state,
+.chart-container .empty-state,
+.dashboard-chart-container .empty-state,
+.widget.chart-widget-box .empty-state {
+  background: var(--surface-2);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text-secondary) !important;
+  font-size: var(--text-sm) !important;
+  padding: var(--sp-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 200px;
+  margin-block: var(--sp-1);
+}
+
+/* Some Frappe charts emit the "mandatory" message as red text. Neutralise
+   it so it reads as a setup hint rather than a runtime error. */
+.chart-container .text-danger,
+.dashboard-chart-container .text-danger,
+.widget.chart-widget-box .text-danger {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+}
+
+/* ---- 5. Link cards (Accounting Masters, Payments, Tax Masters, …) --- */
+/* Default Frappe link cards render <a class="link-item"> rows with poor
+   hover affordance and uneven padding. Make them scannable rows. */
+.links-widget-box .link-item,
+.widget.links-widget-box .link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-1);
+  padding: 8px 10px !important;
+  margin: 0 !important;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary) !important;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+.links-widget-box .link-item:hover,
+.widget.links-widget-box .link-item:hover {
+  background-color: var(--primary-light);
+  color: var(--primary) !important;
+  text-decoration: none;
+}
+
+/* Restore a subtle separator between rows (8px-grid friendly) */
+.links-widget-box .link-item + .link-item,
+.widget.links-widget-box .link-item + .link-item {
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+}
+.links-widget-box .link-item:first-child,
+.widget.links-widget-box .link-item:first-child {
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
+}
+.links-widget-box .link-item:last-child,
+.widget.links-widget-box .link-item:last-child {
+  border-bottom-left-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+/* The little "↗ open in new tab" icon next to each link — keep muted */
+.links-widget-box .link-item .indicator-pill,
+.links-widget-box .link-item .small {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+/* The widget title above link lists — match section header tone */
+.widget.links-widget-box .widget-title,
+.links-widget-box .widget-title {
+  color: var(--text-primary) !important;
+  font-size: var(--text-body) !important;
+  font-weight: 600 !important;
+  margin-bottom: var(--sp-1) !important;
+}
+.widget.links-widget-box .widget-subtitle,
+.links-widget-box .widget-subtitle {
+  color: var(--text-secondary) !important;
+  font-size: var(--text-xs);
+}
+
+/* ---- 6. Shortcut cards — bigger tap target, clearer ---------------- */
+.shortcut-widget-box,
+.widget.shortcut-widget-box {
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--sp-2) !important;
+}
+
+.shortcut-widget-box .widget-title,
+.widget.shortcut-widget-box .widget-title {
+  font-size: var(--text-body) !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+.shortcut-widget-box .widget-subtitle,
+.widget.shortcut-widget-box .widget-subtitle {
+  color: var(--text-secondary) !important;
+  font-size: var(--text-xs);
+  margin-top: var(--sp-xs);
+}
+
+/* Hover lift is handled by the global rule in custom_theme.css.
+   Only adjust the active-state border accent here. */
+.shortcut-widget-box:hover {
+  border-color: var(--primary-light) !important;
+}
+
+/* ---- 7. Onboarding & quick-list widgets --------------------------- */
+.onboarding-widget-box,
+.widget.onboarding-widget-box {
+  background:
+    linear-gradient(180deg, var(--primary-50) 0%, var(--surface) 100%) !important;
+  border-color: var(--primary-light) !important;
+}
+.onboarding-widget-box .widget-title,
+.widget.onboarding-widget-box .widget-title {
+  color: var(--primary) !important;
+}
+
+.quick-list-widget-box,
+.widget.quick-list-widget-box {
+  padding: var(--sp-2) !important;
+}
+.quick-list-widget-box .quick-list-item {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+}
+.quick-list-widget-box .quick-list-item:hover {
+  background: var(--surface-2);
+}
+
+/* ---- 8. Workspace sidebar (left rail) — tighten rhythm ----------- */
+/* Active-state accent already set by custom_theme.css. Just refine the
+   spacing of nested items so they don't crowd the parent. */
+.workspace-sidebar .standard-sidebar-item,
+.desk-sidebar .standard-sidebar-item {
+  margin-block: 1px;
+}
+.workspace-sidebar .nested-container .standard-sidebar-item,
+.desk-sidebar .nested-container .standard-sidebar-item {
+  padding-inline-start: var(--sp-3);
+}
+
+/* ---- 9. Page head when used inside a workspace ------------------- */
+/* Keep the breadcrumb area airier and visually separated from content. */
+.workspace .page-head,
+.workspace-container ~ .page-head,
+.workspace-page-container .page-head {
+  background-color: var(--bg) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* ---- 10. Responsive behaviour ----------------------------------- */
+@media (max-width: 768px) {
+  .layout-main-section.workspace .codex-editor,
+  .workspace-container .codex-editor {
+    padding-inline: var(--sp-2);
+    padding-bottom: var(--sp-4);
+  }
+
+  .number-card,
+  .number-card-widget-box,
+  .widget.number-card {
+    min-height: 96px;
+    padding: var(--sp-2) !important;
+  }
+  .number-card .widget-body .number,
+  .number-card-widget-box .widget-body .number {
+    font-size: var(--text-h3) !important;
+  }
+
+  .codex-editor .ce-block .ce-header,
+  .workspace-container .ce-block h2,
+  .workspace-container .ce-block h3 {
+    margin-top: var(--sp-3);
+  }
+}
+
+/* ---- 11. Reduced-motion respect --------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .number-card::before,
+  .number-card-widget-box::before,
+  .links-widget-box .link-item,
+  .widget.links-widget-box .link-item {
+    transition: none !important;
+  }
+}
