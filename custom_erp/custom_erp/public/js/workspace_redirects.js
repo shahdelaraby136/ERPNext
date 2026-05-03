@@ -27,6 +27,15 @@
 		"subcontracting": "/app/subcontracting",
 		"manufacturing":  "/app/manufacturing",
 		"financial reports": "/app/financial-reports",
+		"payroll":    "/app/payroll",
+		"leaves":     "/app/leaves",
+		"recruitment": "/app/recruitment",
+		"shift & attendance": "/app/shift-%26-attendance",
+		"performance": "/app/performance",
+		"tax & benefits": "/app/tax-%26-benefits",
+		"tenure": "/app/tenure",
+		"expenses": "/app/expenses",
+		"hr setup": "/app/hr-setup",
 	};
 
 	function navigateDirect(target) {
@@ -38,7 +47,7 @@
 	}
 
 	function isOurDashboard(el) {
-		return !!(el && el.closest && el.closest(".ce-acc-root, .ce-inv-root, .ce-sell-root, .ce-asset-root, .ce-buy-root, .ce-proj-root, .ce-qual-root, .ce-stock-root, .ce-sub-root, .ce-mfg-root, .ce-fin-root"));
+		return !!(el && el.closest && el.closest(".ce-acc-root, .ce-inv-root, .ce-sell-root, .ce-asset-root, .ce-buy-root, .ce-proj-root, .ce-qual-root, .ce-stock-root, .ce-sub-root, .ce-mfg-root, .ce-fin-root, .ce-payroll-root, .ce-leaves-root, .ce-recr-root, .ce-shift-root, .ce-perf-root, .ce-tax-root, .ce-tenure-root, .ce-exp-root, .ce-hrsetup-root"));
 	}
 
 	// --- Strategy 1: capture-phase click & mousedown on the document ---

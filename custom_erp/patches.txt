@@ -6,3 +6,12 @@
 # Patches added in this section will be executed after doctypes are migrated
 custom_erp.patches.v1_0.install_customer_health_score_field
 custom_erp.patches.v1_0.install_selling_dashboard_script
+custom_erp.patches.v1_0.install_hr_payroll_dashboard_script
+custom_erp.patches.v1_0.install_hr_leaves_dashboard_script
+custom_erp.patches.v1_0.install_hr_recruitment_dashboard_script
+custom_erp.patches.v1_0.install_hr_shift_dashboard_script
+custom_erp.patches.v1_0.install_hr_performance_dashboard_script
+custom_erp.patches.v1_0.install_hr_tax_dashboard_script
+custom_erp.patches.v1_0.install_hr_tenure_dashboard_script
+custom_erp.patches.v1_0.install_hr_expenses_dashboard_script
+custom_erp.patches.v1_0.install_hr_setup_dashboard_script

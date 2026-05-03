@@ -1,0 +1,34 @@
+/* ============================================================
+   Custom Tenure Dashboard — reuses .ce-theme-brand from
+   selling_dashboard.css. This file owns the root container +
+   the body-class hide rules for /app/tenure.
+   ============================================================ */
+
+.ce-tenure-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-tenure {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-tenure-active .layout-main-section > *:not(.ce-tenure-root) { display: none !important; }
+body.ce-tenure-active .ce-tenure-root { display: block !important; }
+.layout-main-section:has(> .ce-tenure-root) > :not(.ce-tenure-root) { display: none !important; }
+
+body.ce-tenure-active .container.page-container,
+body.ce-tenure-active .page-container,
+body.ce-tenure-active .layout-main,
+body.ce-tenure-active .layout-main-section,
+body.ce-tenure-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-tenure-active .ds-container { max-width: 1600px !important; }

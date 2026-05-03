@@ -1,0 +1,34 @@
+/* ============================================================
+   Custom HR Setup Dashboard — reuses .ce-theme-brand from
+   selling_dashboard.css. This file owns the root container +
+   the body-class hide rules for /app/hr-setup.
+   ============================================================ */
+
+.ce-hrsetup-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-hrsetup {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-hrsetup-active .layout-main-section > *:not(.ce-hrsetup-root) { display: none !important; }
+body.ce-hrsetup-active .ce-hrsetup-root { display: block !important; }
+.layout-main-section:has(> .ce-hrsetup-root) > :not(.ce-hrsetup-root) { display: none !important; }
+
+body.ce-hrsetup-active .container.page-container,
+body.ce-hrsetup-active .page-container,
+body.ce-hrsetup-active .layout-main,
+body.ce-hrsetup-active .layout-main-section,
+body.ce-hrsetup-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-hrsetup-active .ds-container { max-width: 1600px !important; }

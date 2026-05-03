@@ -89,17 +89,17 @@
 	background: #FFFFFF;
 	border: 1px solid var(--border);
 	border-radius: var(--radius-lg);
-	padding: var(--sp-3);                /* 24px — match .ce-stat */
-	min-height: 155px;                   /* same height as .ce-stat */
+	padding: var(--sp-3);                /* 24px on every side */
+	height: 168px;                       /* fixed — identical across all hubs */
 	box-shadow: var(--shadow-card);
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
+	gap: var(--sp-2);                    /* 16px between inner content */
 }
 .ce-theme-brand .ce-card-top {
 	display: flex; align-items: center; justify-content: space-between;
-	margin-bottom: 12px;
+	margin-bottom: 0;
 }
 .ce-theme-brand .ce-card-icon {
 	width: 38px; height: 38px;
@@ -118,13 +118,13 @@
 	font-variant-numeric: tabular-nums;
 }
 .ce-theme-brand .ce-card-label {
-	margin-top: 6px;
+	margin-top: 0;
 	font-size: 13px;
 	color: var(--text-secondary);
 	font-weight: 600;
 }
 .ce-theme-brand .ce-card-sub {
-	margin-top: 4px;
+	margin-top: 0;
 	font-size: 12px;
 	color: var(--ce-brand-700);
 	font-weight: 500;
@@ -139,7 +139,7 @@
 .ce-theme-brand .ce-delta.down { background: #FEE2E2; color: #991B1B; }
 
 .ce-theme-brand .ce-skeleton-card {
-	height: 132px;
+	height: 168px;                       /* matches .ce-card-brand */
 	border-radius: var(--radius-lg);
 	background: linear-gradient(90deg, #EFF6FF 0%, #DBEAFE 50%, #EFF6FF 100%);
 	background-size: 200% 100%;

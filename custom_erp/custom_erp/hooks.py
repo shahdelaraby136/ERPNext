@@ -32,7 +32,7 @@ fixtures = [
     {"dt": "Print Format", "filters": [["module", "=", "Custom ERP"]]},
     {"dt": "Workspace", "filters": [["name", "in", ["Custom ERP", "Accounting"]]]},
     {"dt": "Property Setter", "filters": [["doc_type", "in", ["Patient Encounter"]]]},
-    {"dt": "Server Script", "filters": [["name", "in", ["selling_dashboard_data", "assets_dashboard_data", "buying_dashboard_data", "projects_dashboard_data", "quality_dashboard_data", "stock_dashboard_data", "subcontracting_dashboard_data", "manufacturing_dashboard_data", "financial_reports_dashboard_data"]]]},
+    {"dt": "Server Script", "filters": [["name", "in", ["selling_dashboard_data", "assets_dashboard_data", "buying_dashboard_data", "projects_dashboard_data", "quality_dashboard_data", "stock_dashboard_data", "subcontracting_dashboard_data", "manufacturing_dashboard_data", "financial_reports_dashboard_data", "hr_payroll_dashboard_data", "hr_leaves_dashboard_data", "hr_recruitment_dashboard_data", "hr_shift_dashboard_data", "hr_performance_dashboard_data", "hr_tax_dashboard_data", "hr_tenure_dashboard_data", "hr_expenses_dashboard_data", "hr_setup_dashboard_data"]]]},
     {"dt": "Custom Field", "filters": [["name", "in", ["Customer-customer_health_score"]]]},
 ]
 
@@ -57,22 +57,31 @@ fixtures = [
 
 # include js, css files in header of desk.html
 app_include_css = [
-    "/assets/custom_erp/css/custom_theme.css?v=42",
+    "/assets/custom_erp/css/custom_theme.css?v=52",
     "/assets/custom_erp/css/design-system.css?v=2",
     "/assets/custom_erp/css/workspace.css?v=2",
-    "/assets/custom_erp/css/selling_dashboard.css?v=15",
-    "/assets/custom_erp/css/assets_dashboard.css?v=1",
-    "/assets/custom_erp/css/buying_dashboard.css?v=1",
-    "/assets/custom_erp/css/projects_dashboard.css?v=1",
-    "/assets/custom_erp/css/quality_dashboard.css?v=1",
-    "/assets/custom_erp/css/stock_dashboard.css?v=1",
-    "/assets/custom_erp/css/subcontracting_dashboard.css?v=2",
-    "/assets/custom_erp/css/manufacturing_dashboard.css?v=1",
-    "/assets/custom_erp/css/financial_reports_dashboard.css?v=1",
+    "/assets/custom_erp/css/selling_dashboard.css?v=18",
+    "/assets/custom_erp/css/assets_dashboard.css?v=3",
+    "/assets/custom_erp/css/buying_dashboard.css?v=3",
+    "/assets/custom_erp/css/projects_dashboard.css?v=3",
+    "/assets/custom_erp/css/quality_dashboard.css?v=3",
+    "/assets/custom_erp/css/stock_dashboard.css?v=3",
+    "/assets/custom_erp/css/subcontracting_dashboard.css?v=4",
+    "/assets/custom_erp/css/manufacturing_dashboard.css?v=3",
+    "/assets/custom_erp/css/financial_reports_dashboard.css?v=3",
+    "/assets/custom_erp/css/hr_payroll_dashboard.css?v=1",
+    "/assets/custom_erp/css/hr_leaves_dashboard.css?v=1",
+    "/assets/custom_erp/css/hr_recruitment_dashboard.css?v=1",
+    "/assets/custom_erp/css/hr_shift_dashboard.css?v=1",
+    "/assets/custom_erp/css/hr_performance_dashboard.css?v=1",
+    "/assets/custom_erp/css/hr_tax_dashboard.css?v=1",
+    "/assets/custom_erp/css/hr_tenure_dashboard.css?v=1",
+    "/assets/custom_erp/css/hr_expenses_dashboard.css?v=1",
+    "/assets/custom_erp/css/hr_setup_dashboard.css?v=1",
 ]
 app_include_js = [
     "/assets/custom_erp/js/selling_dashboard.js?v=9",
-    "/assets/custom_erp/js/workspace_redirects.js?v=17",
+    "/assets/custom_erp/js/workspace_redirects.js?v=26",
     "/assets/custom_erp/js/invoicing_dashboard.js?v=7",
     "/assets/custom_erp/js/accounting_hub.js?v=8",
     "/assets/custom_erp/js/assets_hub.js?v=7",
@@ -83,6 +92,15 @@ app_include_js = [
     "/assets/custom_erp/js/subcontracting_hub.js?v=4",
     "/assets/custom_erp/js/manufacturing_hub.js?v=4",
     "/assets/custom_erp/js/financial_reports_hub.js?v=4",
+    "/assets/custom_erp/js/hr_payroll_hub.js?v=1",
+    "/assets/custom_erp/js/hr_leaves_hub.js?v=1",
+    "/assets/custom_erp/js/hr_recruitment_hub.js?v=2",
+    "/assets/custom_erp/js/hr_shift_hub.js?v=2",
+    "/assets/custom_erp/js/hr_performance_hub.js?v=1",
+    "/assets/custom_erp/js/hr_tax_hub.js?v=1",
+    "/assets/custom_erp/js/hr_tenure_hub.js?v=1",
+    "/assets/custom_erp/js/hr_expenses_hub.js?v=1",
+    "/assets/custom_erp/js/hr_setup_hub.js?v=1",
 ]
 
 # include js, css files in header of web template
