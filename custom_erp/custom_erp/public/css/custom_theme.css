@@ -594,9 +594,37 @@ textarea.form-control { min-height: 96px; padding: 10px 12px !important; }
 .form-control:focus, .input-with-feedback:focus, .awesomplete > input:focus,
 select.form-control:focus, textarea.form-control:focus {
   border-color: var(--primary) !important;
-  box-shadow: var(--focus-ring) !important;
+  box-shadow: none !important;
   outline: none !important;
 }
+/* Preserve Frappe's left padding for fieldtypes that overlay an icon
+   on the input's left edge (Color swatch, Icon picker, Phone flag).
+   Our generic .form-control padding rule above blows these away. */
+.frappe-control[data-fieldtype="Color"] input.form-control,
+.frappe-control[data-fieldtype="Color"] input.input-with-feedback {
+  padding-left: 36px !important;
+}
+.frappe-control[data-fieldtype="Icon"] input.form-control,
+.frappe-control[data-fieldtype="Icon"] input.input-with-feedback {
+  padding-left: 36px !important;
+}
+.frappe-control[data-fieldtype="Phone"] input.form-control,
+.frappe-control[data-fieldtype="Phone"] input.input-with-feedback {
+  padding-left: 36px !important;
+}
+/* Vertically center the overlay icon for the 40px-tall input. */
+.frappe-control[data-fieldtype="Color"] .selected-color,
+.frappe-control[data-fieldtype="Icon"] .selected-icon,
+.frappe-control[data-fieldtype="Phone"] .selected-phone-prefix {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+.frappe-control[data-fieldtype="Color"] .like-disabled-input .color-value,
+.frappe-control[data-fieldtype="Icon"]  .like-disabled-input .icon-value,
+.frappe-control[data-fieldtype="Phone"] .like-disabled-input .phone-value {
+  padding-left: 30px !important;
+}
+
 /* Error state — paired with .has-error wrapper (Frappe convention) */
 .has-error .form-control,
 .form-control.has-error,
@@ -984,151 +1012,43 @@ input[type="radio"]:disabled {
 .list-subject .bold, .list-subject a { color: var(--text-primary) !important; font-weight: 600; }
 .list-subject a:hover { color: var(--primary) !important; }
 
-/* ---- 11b. Form Grid (child tables inside forms) -----------------------
-   Frappe's child-table grid is a Bootstrap row+col layout. Out of the box
-   the headers truncate, narrow columns (checkbox / row-index / settings)
-   eat space from data columns, and the "No rows" empty state collapses.
-   Polish it: fixed widths for utility columns, flex sizing for data cells,
-   readable headers (no UPPERCASE squashing), 40px row height, calm hover,
-   proper empty state. */
-.form-grid {
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius) !important;
-  background: var(--surface) !important;
-  overflow: hidden;
-}
-.form-grid .grid-heading-row {
-  background: var(--surface-2) !important;
-  border-bottom: 1px solid var(--border) !important;
-}
-.form-grid .grid-heading-row .data-row,
-.form-grid .grid-row .data-row {
-  margin: 0 !important;
-  align-items: stretch;
-}
-/* Data cells share the remaining space equally; utility columns are fixed */
-.form-grid .grid-row .col {
-  padding: 6px 10px !important;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
-  flex: 1 1 0;
-  min-width: 0;
-}
-/* Header cells: readable, allow wrap (not uppercase squash) */
-.form-grid .grid-heading-row .col {
+/* ---- 11b. Form Grid (child tables) -----------------------------------
+   Use Frappe's native compact grid. The only job here is to undo the
+   global .form-control (40px tall, 10/12 padding) and .btn rules so they
+   don't inflate grid cells. NO column width / row height / heading
+   overrides — those break Frappe's per-column layout. */
+.form-grid .form-control,
+.form-grid .input-with-feedback,
+.form-grid .like-disabled-input,
+.form-grid select.form-control,
+.form-grid textarea.form-control {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 4px 6px !important;
   font-size: var(--text-sm) !important;
-  font-weight: 600 !important;
-  color: var(--text-secondary) !important;
-  padding: 10px !important;
-  white-space: normal;
-  line-height: 1.3;
-  min-height: 40px;
-}
-/* Fixed-width utility columns: checkbox / row-index / settings gear */
-.form-grid .row-index {
-  flex: 0 0 56px !important;
-  max-width: 56px !important;
-  justify-content: center;
-  color: var(--text-secondary);
-  font-size: var(--text-sm);
-  gap: 6px;
-}
-.form-grid .row-index .grid-row-check { margin: 0; }
-.form-grid .grid-row-check { cursor: pointer; }
-.form-grid .grid-row .col[data-fieldname="open"],
-.form-grid .grid-heading-row .col:last-child {
-  flex: 0 0 44px !important;
-  max-width: 44px !important;
-  justify-content: center;
-}
-/* Body row visuals — tight border between rows, calm hover */
-.form-grid .grid-body { background: var(--surface) !important; }
-.form-grid .grid-row {
-  border-bottom: 1px solid var(--border) !important;
-  background: var(--surface) !important;
-  transition: background-color var(--t-fast) var(--ease);
-}
-.form-grid .grid-row:last-child { border-bottom: none !important; }
-.form-grid .grid-row:hover { background: var(--surface-2) !important; }
-.form-grid .grid-row.grid-row-open,
-.form-grid .grid-row.selected-row { background: var(--primary-50) !important; }
-/* Inputs inside grid cells: borderless until hover/focus, fill the cell */
-.form-grid .grid-row .col .form-control,
-.form-grid .grid-row .col .input-with-feedback,
-.form-grid .grid-row .col .like-disabled-input {
+  line-height: 1.4 !important;
   border: 1px solid transparent !important;
   background: transparent !important;
-  padding: 4px 8px !important;
-  min-height: 28px !important;
-  height: 28px !important;
-  font-size: var(--text-sm) !important;
   box-shadow: none !important;
-  border-radius: var(--radius-sm) !important;
-  width: 100%;
+  border-radius: 4px !important;
 }
-.form-grid .grid-row .col .form-control:hover,
-.form-grid .grid-row .col .input-with-feedback:hover {
+.form-grid .form-control:hover,
+.form-grid .input-with-feedback:hover {
   background: var(--surface) !important;
   border-color: var(--border) !important;
 }
-.form-grid .grid-row .col .form-control:focus,
-.form-grid .grid-row .col .input-with-feedback:focus {
+.form-grid .form-control:focus,
+.form-grid .input-with-feedback:focus {
   background: var(--surface) !important;
   border-color: var(--primary) !important;
-  box-shadow: var(--focus-ring) !important;
+  box-shadow: none !important;
 }
-.form-grid .grid-row .col .has-error .form-control,
-.form-grid .grid-row .col .form-control[aria-invalid="true"] {
-  border-color: var(--error) !important;
-  background: rgba(220, 38, 38, 0.04) !important;
-}
-.form-grid .grid-static-col {
-  color: var(--text-primary);
-  font-size: var(--text-sm);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* Edit-row pencil — neat round button */
-.form-grid .btn-open-row {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px; height: 28px;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
-}
-.form-grid .btn-open-row:hover { background: var(--primary-light); color: var(--primary); }
-.form-grid .btn-open-row svg { width: 14px; height: 14px; }
-/* Empty state ("No rows") — give it real height so it doesn't collapse
-   into the header */
-.form-grid .grid-empty,
-.form-grid .grid-empty-row {
-  padding: 24px 16px !important;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: var(--text-sm);
-  background: var(--surface) !important;
-  border-top: 1px solid var(--border);
-}
-/* Bottom toolbar (Add row / Add multiple / Bulk paste) */
-.form-grid .grid-buttons {
-  padding: 10px 12px;
-  border-top: 1px solid var(--border);
-  background: var(--surface) !important;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-1);
-}
-.form-grid .grid-buttons .btn {
-  min-height: 32px !important;
-  padding: 6px 12px !important;
+.form-grid .grid-buttons .btn,
+.form-grid .grid-footer-toolbar .btn {
+  min-height: 0 !important;
+  padding: 4px 10px !important;
   font-size: var(--text-sm) !important;
 }
-/* Section label sitting above the grid (e.g. "Accounts") */
 .frappe-control[data-fieldtype="Table"] > .form-group > .control-label {
   font-size: var(--text-sm);
   font-weight: 600;
@@ -1325,11 +1245,14 @@ hr { border-color: var(--border); }
    Keep each app's original brand color. Subtle polish + clean spacing.
    ========================================================================== */
 
-/* Grid layout — even spacing using 8px system */
+/* Icon grid layout — even spacing using 8px system.
+   Scoped to icon-grid containers ONLY. The previous selector
+   `.layout-main-section .row` matched every Bootstrap .row inside the form
+   (including child-table heading-row and data-row), turning their flex
+   layout into CSS Grid and breaking column widths. */
 .app-icon-grid,
 .module-page,
-.apps-page,
-.layout-main-section .row {
+.apps-page {
   gap: var(--sp-3);
   padding: var(--sp-2) !important;
   display: grid !important;
@@ -1917,4 +1840,173 @@ html[lang^="ar"],
   .btn-ghost:active {
     transform: none !important;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* HARD KILL — any focus shadow/outline on inputs and their wrappers. */
+/* Sits at the end of the file to win cascade ties. Blue border only. */
+/* ------------------------------------------------------------------ */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+.form-control:focus,
+.form-control:focus-visible,
+.input-with-feedback:focus,
+.input-with-feedback:focus-visible,
+.awesomplete > input:focus,
+.awesomplete > input:focus-visible,
+.like-disabled-input:focus,
+.like-disabled-input:focus-visible,
+.input-area input:focus,
+.input-area input:focus-visible,
+.input-area textarea:focus,
+.input-area textarea:focus-visible,
+.input-area select:focus,
+.input-area select:focus-visible,
+.frappe-control input:focus,
+.frappe-control input:focus-visible,
+.frappe-control textarea:focus,
+.frappe-control textarea:focus-visible,
+.frappe-control select:focus,
+.frappe-control select:focus-visible,
+.control-input:focus-within,
+.control-input-wrapper:focus-within,
+.frappe-control:focus-within {
+  box-shadow: none !important;
+  outline: 0 !important;
+  outline-offset: 0 !important;
+  -webkit-box-shadow: none !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Custom Select dropdown — paired with public/js/custom_select.js     */
+/* Replaces the OS-native <select> popup with a styled menu that opens */
+/* directly below the trigger and animates in.                         */
+/* ------------------------------------------------------------------ */
+.ce-select-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+/* Hide the native select but keep it functional for Frappe controllers. */
+.ce-select-wrapper > select.form-control {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  margin: 0 !important;
+}
+.ce-select-trigger {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 12px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  color: var(--text-primary) !important;
+  font-size: var(--text-sm) !important;
+  line-height: 1.4;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease),
+              background-color var(--t-fast) var(--ease);
+}
+.ce-select-trigger:hover { border-color: var(--border-strong) !important; }
+.ce-select-trigger:focus,
+.ce-select-trigger[aria-expanded="true"] {
+  border-color: var(--primary) !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.ce-select-trigger[disabled] {
+  background-color: var(--surface-2) !important;
+  color: var(--text-secondary) !important;
+  cursor: not-allowed;
+}
+.ce-select-label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ce-select-label--placeholder { color: var(--text-muted); }
+.ce-select-arrow {
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+  color: var(--text-secondary);
+  transition: transform var(--t-fast) var(--ease);
+}
+.ce-select-trigger[aria-expanded="true"] .ce-select-arrow {
+  transform: rotate(180deg);
+  color: var(--primary);
+}
+
+/* Dropdown menu — appended to <body>, positioned via JS. */
+.ce-select-menu {
+  position: fixed;
+  z-index: 2000;
+  min-width: 160px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow:
+    0 12px 28px -10px rgba(15, 23, 42, 0.18),
+    0 4px 10px -4px rgba(15, 23, 42, 0.10);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.ce-select-menu--up {
+  transform: translateY(10px);
+}
+.ce-select-menu.ce-select-menu--open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.ce-select-option {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.ce-select-option:hover {
+  background-color: var(--primary-soft);
+  color: var(--primary);
+}
+.ce-select-option--selected {
+  background-color: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 500;
+}
+.ce-select-option--clear {
+  color: var(--text-muted);
+  font-size: calc(var(--text-sm) - 1px);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  margin-bottom: 4px;
+}
+.ce-select-option--clear:hover {
+  background-color: var(--surface-2);
+  color: var(--error, #dc2626);
 }
