@@ -1,0 +1,40 @@
+/* ============================================================
+   Custom Insurance Dashboard — root + hero + hide rules
+   for /app/insurance.
+   ============================================================ */
+
+.ce-ins-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-ins,
+.ce-hero-ins {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-ins-active .layout-main-section > *:not(.ce-ins-root) { display: none !important; }
+body.ce-ins-active .ce-ins-root { display: block !important; }
+.layout-main-section:has(> .ce-ins-root) > :not(.ce-ins-root) { display: none !important; }
+
+body.ce-ins-active .container.page-container,
+body.ce-ins-active .page-container,
+body.ce-ins-active .layout-main,
+body.ce-ins-active .layout-main-section,
+body.ce-ins-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-ins-active .ds-container { max-width: 1600px !important; }
+
+body.ce-ins-active .modal[id*="workspace"],
+body.ce-ins-active .modal-dialog .workspace-picker,
+body.ce-ins-active .modal-dialog .modal-content:has(.module-link),
+body.ce-ins-active .modal-backdrop:has(+ .modal .module-link),
+body.ce-ins-active .modal:has(.module-link) { display: none !important; }

@@ -1,0 +1,40 @@
+/* ============================================================
+   Custom Diagnostics Dashboard — root + hero + hide rules
+   for /app/diagnostics.
+   ============================================================ */
+
+.ce-diag-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-diag,
+.ce-hero-diag {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-diag-active .layout-main-section > *:not(.ce-diag-root) { display: none !important; }
+body.ce-diag-active .ce-diag-root { display: block !important; }
+.layout-main-section:has(> .ce-diag-root) > :not(.ce-diag-root) { display: none !important; }
+
+body.ce-diag-active .container.page-container,
+body.ce-diag-active .page-container,
+body.ce-diag-active .layout-main,
+body.ce-diag-active .layout-main-section,
+body.ce-diag-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-diag-active .ds-container { max-width: 1600px !important; }
+
+body.ce-diag-active .modal[id*="workspace"],
+body.ce-diag-active .modal-dialog .workspace-picker,
+body.ce-diag-active .modal-dialog .modal-content:has(.module-link),
+body.ce-diag-active .modal-backdrop:has(+ .modal .module-link),
+body.ce-diag-active .modal:has(.module-link) { display: none !important; }

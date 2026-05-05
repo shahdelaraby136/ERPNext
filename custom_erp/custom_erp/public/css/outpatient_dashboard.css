@@ -1,0 +1,40 @@
+/* ============================================================
+   Custom Outpatient Dashboard — root + hero + hide rules
+   for /app/outpatient. Mirrors healthcare_dashboard.css.
+   ============================================================ */
+
+.ce-out-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-out,
+.ce-hero-out {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-out-active .layout-main-section > *:not(.ce-out-root) { display: none !important; }
+body.ce-out-active .ce-out-root { display: block !important; }
+.layout-main-section:has(> .ce-out-root) > :not(.ce-out-root) { display: none !important; }
+
+body.ce-out-active .container.page-container,
+body.ce-out-active .page-container,
+body.ce-out-active .layout-main,
+body.ce-out-active .layout-main-section,
+body.ce-out-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-out-active .ds-container { max-width: 1600px !important; }
+
+body.ce-out-active .modal[id*="workspace"],
+body.ce-out-active .modal-dialog .workspace-picker,
+body.ce-out-active .modal-dialog .modal-content:has(.module-link),
+body.ce-out-active .modal-backdrop:has(+ .modal .module-link),
+body.ce-out-active .modal:has(.module-link) { display: none !important; }

@@ -1,0 +1,40 @@
+/* ============================================================
+   Custom Rehabilitation Dashboard — root + hero + hide rules
+   for /app/rehabilitation.
+   ============================================================ */
+
+.ce-rehab-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-rehab,
+.ce-hero-rehab {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-rehab-active .layout-main-section > *:not(.ce-rehab-root) { display: none !important; }
+body.ce-rehab-active .ce-rehab-root { display: block !important; }
+.layout-main-section:has(> .ce-rehab-root) > :not(.ce-rehab-root) { display: none !important; }
+
+body.ce-rehab-active .container.page-container,
+body.ce-rehab-active .page-container,
+body.ce-rehab-active .layout-main,
+body.ce-rehab-active .layout-main-section,
+body.ce-rehab-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-rehab-active .ds-container { max-width: 1600px !important; }
+
+body.ce-rehab-active .modal[id*="workspace"],
+body.ce-rehab-active .modal-dialog .workspace-picker,
+body.ce-rehab-active .modal-dialog .modal-content:has(.module-link),
+body.ce-rehab-active .modal-backdrop:has(+ .modal .module-link),
+body.ce-rehab-active .modal:has(.module-link) { display: none !important; }

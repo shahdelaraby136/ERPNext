@@ -36,6 +36,13 @@
 		"tenure": "/app/tenure",
 		"expenses": "/app/expenses",
 		"hr setup": "/app/hr-setup",
+		"healthcare": "/app/healthcare",
+		"outpatient": "/app/outpatient",
+		"inpatient": "/app/inpatient",
+		"rehabilitation": "/app/rehabilitation",
+		"diagnostics": "/app/diagnostics",
+		"insurance": "/app/insurance",
+		"setup": "/app/setup",
 	};
 
 	function navigateDirect(target) {
@@ -47,7 +54,7 @@
 	}
 
 	function isOurDashboard(el) {
-		return !!(el && el.closest && el.closest(".ce-acc-root, .ce-inv-root, .ce-sell-root, .ce-asset-root, .ce-buy-root, .ce-proj-root, .ce-qual-root, .ce-stock-root, .ce-sub-root, .ce-mfg-root, .ce-fin-root, .ce-payroll-root, .ce-leaves-root, .ce-recr-root, .ce-shift-root, .ce-perf-root, .ce-tax-root, .ce-tenure-root, .ce-exp-root, .ce-hrsetup-root"));
+		return !!(el && el.closest && el.closest(".ce-acc-root, .ce-inv-root, .ce-sell-root, .ce-asset-root, .ce-buy-root, .ce-proj-root, .ce-qual-root, .ce-stock-root, .ce-sub-root, .ce-mfg-root, .ce-fin-root, .ce-payroll-root, .ce-leaves-root, .ce-recr-root, .ce-shift-root, .ce-perf-root, .ce-tax-root, .ce-tenure-root, .ce-exp-root, .ce-hrsetup-root, .ce-hc-root, .ce-out-root, .ce-in-root, .ce-rehab-root, .ce-diag-root, .ce-ins-root, .ce-setup-root"));
 	}
 
 	// --- Strategy 1: capture-phase click & mousedown on the document ---

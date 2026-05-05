@@ -1,0 +1,40 @@
+/* ============================================================
+   Custom Setup Dashboard — root + hero + hide rules
+   for /app/setup (Healthcare Setup).
+   ============================================================ */
+
+.ce-setup-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-setup,
+.ce-hero-setup {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-setup-active .layout-main-section > *:not(.ce-setup-root) { display: none !important; }
+body.ce-setup-active .ce-setup-root { display: block !important; }
+.layout-main-section:has(> .ce-setup-root) > :not(.ce-setup-root) { display: none !important; }
+
+body.ce-setup-active .container.page-container,
+body.ce-setup-active .page-container,
+body.ce-setup-active .layout-main,
+body.ce-setup-active .layout-main-section,
+body.ce-setup-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-setup-active .ds-container { max-width: 1600px !important; }
+
+body.ce-setup-active .modal[id*="workspace"],
+body.ce-setup-active .modal-dialog .workspace-picker,
+body.ce-setup-active .modal-dialog .modal-content:has(.module-link),
+body.ce-setup-active .modal-backdrop:has(+ .modal .module-link),
+body.ce-setup-active .modal:has(.module-link) { display: none !important; }

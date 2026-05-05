@@ -57,7 +57,7 @@ fixtures = [
 
 # include js, css files in header of desk.html
 app_include_css = [
-    "/assets/custom_erp/css/custom_theme.css?v=61",
+    "/assets/custom_erp/css/custom_theme.css?v=63",
     "/assets/custom_erp/css/design-system.css?v=2",
     "/assets/custom_erp/css/workspace.css?v=2",
     "/assets/custom_erp/css/selling_dashboard.css?v=18",
@@ -78,11 +78,18 @@ app_include_css = [
     "/assets/custom_erp/css/hr_tenure_dashboard.css?v=1",
     "/assets/custom_erp/css/hr_expenses_dashboard.css?v=1",
     "/assets/custom_erp/css/hr_setup_dashboard.css?v=1",
+    "/assets/custom_erp/css/healthcare_dashboard.css?v=1",
+    "/assets/custom_erp/css/outpatient_dashboard.css?v=1",
+    "/assets/custom_erp/css/inpatient_dashboard.css?v=1",
+    "/assets/custom_erp/css/rehabilitation_dashboard.css?v=2",
+    "/assets/custom_erp/css/diagnostics_dashboard.css?v=1",
+    "/assets/custom_erp/css/insurance_dashboard.css?v=1",
+    "/assets/custom_erp/css/setup_dashboard.css?v=1",
 ]
 app_include_js = [
     "/assets/custom_erp/js/custom_select.js?v=4",
     "/assets/custom_erp/js/selling_dashboard.js?v=9",
-    "/assets/custom_erp/js/workspace_redirects.js?v=26",
+    "/assets/custom_erp/js/workspace_redirects.js?v=33",
     "/assets/custom_erp/js/invoicing_dashboard.js?v=7",
     "/assets/custom_erp/js/accounting_hub.js?v=8",
     "/assets/custom_erp/js/assets_hub.js?v=7",
@@ -102,6 +109,13 @@ app_include_js = [
     "/assets/custom_erp/js/hr_tenure_hub.js?v=1",
     "/assets/custom_erp/js/hr_expenses_hub.js?v=1",
     "/assets/custom_erp/js/hr_setup_hub.js?v=1",
+    "/assets/custom_erp/js/healthcare_hub.js?v=3",
+    "/assets/custom_erp/js/outpatient_hub.js?v=1",
+    "/assets/custom_erp/js/inpatient_hub.js?v=2",
+    "/assets/custom_erp/js/rehabilitation_hub.js?v=3",
+    "/assets/custom_erp/js/diagnostics_hub.js?v=2",
+    "/assets/custom_erp/js/insurance_hub.js?v=1",
+    "/assets/custom_erp/js/setup_hub.js?v=1",
 ]
 
 # include js, css files in header of web template

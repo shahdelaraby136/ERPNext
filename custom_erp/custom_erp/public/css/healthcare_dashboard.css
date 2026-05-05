@@ -1,0 +1,42 @@
+/* ============================================================
+   Custom Healthcare Dashboard — owns the root container,
+   hero gradient, and body-class hide rules for /app/healthcare.
+   Mirrors buying_dashboard.css / assets_dashboard.css structure.
+   ============================================================ */
+
+.ce-hc-root {
+	display: block;
+	width: 100%;
+	min-height: 100%;
+	background: var(--bg);
+	padding-bottom: var(--sp-6);
+}
+
+.ce-theme-brand .ce-hero-hc,
+.ce-hero-hc {
+	background: linear-gradient(180deg, var(--primary-50) 0%, var(--bg) 100%) !important;
+	color: var(--text-primary) !important;
+	border-bottom: 1px solid var(--border) !important;
+	padding-block: 32px !important;
+	padding-inline: 0 !important;
+	box-shadow: none;
+}
+
+body.ce-hc-active .layout-main-section > *:not(.ce-hc-root) { display: none !important; }
+body.ce-hc-active .ce-hc-root { display: block !important; }
+.layout-main-section:has(> .ce-hc-root) > :not(.ce-hc-root) { display: none !important; }
+
+body.ce-hc-active .container.page-container,
+body.ce-hc-active .page-container,
+body.ce-hc-active .layout-main,
+body.ce-hc-active .layout-main-section,
+body.ce-hc-active .layout-main-section-wrapper { max-width: none !important; width: 100% !important; }
+
+body.ce-hc-active .ds-container { max-width: 1600px !important; }
+
+/* Suppress the native workspace-picker modal when our hub is active. */
+body.ce-hc-active .modal[id*="workspace"],
+body.ce-hc-active .modal-dialog .workspace-picker,
+body.ce-hc-active .modal-dialog .modal-content:has(.module-link),
+body.ce-hc-active .modal-backdrop:has(+ .modal .module-link),
+body.ce-hc-active .modal:has(.module-link) { display: none !important; }
