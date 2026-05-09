@@ -30,7 +30,7 @@ fixtures = [
     "Lab Test UOM",
     "Lab Test Sample",
     {"dt": "Print Format", "filters": [["module", "=", "Custom ERP"]]},
-    {"dt": "Workspace", "filters": [["name", "in", ["Custom ERP", "Accounting"]]]},
+    {"dt": "Workspace", "filters": [["name", "in", ["Custom ERP", "Accounting", "Invoicing", "Selling", "Buying", "Stock", "Manufacturing", "Subcontracting", "Projects", "Quality", "Assets", "Financial Reports", "HR Setup", "Healthcare", "Outpatient", "Inpatient", "Rehabilitation", "Diagnostics", "Insurance", "Setup"]]]},
     {"dt": "Property Setter", "filters": [["doc_type", "in", ["Patient Encounter"]]]},
     {"dt": "Server Script", "filters": [["name", "in", ["selling_dashboard_data", "assets_dashboard_data", "buying_dashboard_data", "projects_dashboard_data", "quality_dashboard_data", "stock_dashboard_data", "subcontracting_dashboard_data", "manufacturing_dashboard_data", "financial_reports_dashboard_data", "hr_payroll_dashboard_data", "hr_leaves_dashboard_data", "hr_recruitment_dashboard_data", "hr_shift_dashboard_data", "hr_performance_dashboard_data", "hr_tax_dashboard_data", "hr_tenure_dashboard_data", "hr_expenses_dashboard_data", "hr_setup_dashboard_data"]]]},
     {"dt": "Custom Field", "filters": [["name", "in", ["Customer-customer_health_score"]]]},
