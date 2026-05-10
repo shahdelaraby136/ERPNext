@@ -90,12 +90,11 @@
 	border: 1px solid var(--border);
 	border-radius: var(--radius-lg);
 	padding: var(--sp-3);                /* 24px on every side */
-	height: 168px;                       /* fixed — identical across all hubs */
+	min-height: 168px;                   /* grows when sub line is present; grid row stretches siblings */
 	box-shadow: var(--shadow-card);
-	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	gap: var(--sp-2);                    /* 16px between inner content */
+	gap: var(--sp-1);                    /* 8px between inner content — keeps 4-line cards inside 168px */
 }
 .ce-theme-brand .ce-card-top {
 	display: flex; align-items: center; justify-content: space-between;
