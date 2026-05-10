@@ -1360,7 +1360,8 @@ hr { border-color: var(--border); }
 .desktop-icon[data-id="Framework"] .icon-container,
 .desktop-icon[data-id="Custom ERP"] .icon-container,
 .desktop-icon[data-id="ERPNext Settings"] .icon-container,
-.desktop-icon[data-id="CRM"] .icon-container {
+.desktop-icon[data-id="CRM"] .icon-container,
+.desktop-icon[data-id="Raven"] .icon-container {
   background: #FFFFFF !important;
   position: relative;
   padding: 0 !important;
@@ -1381,7 +1382,8 @@ hr { border-color: var(--border); }
 .desktop-icon[data-id="Framework"] .icon-container > *,
 .desktop-icon[data-id="Custom ERP"] .icon-container > *,
 .desktop-icon[data-id="ERPNext Settings"] .icon-container > *,
-.desktop-icon[data-id="CRM"] .icon-container > * {
+.desktop-icon[data-id="CRM"] .icon-container > *,
+.desktop-icon[data-id="Raven"] .icon-container > * {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
@@ -1400,7 +1402,8 @@ hr { border-color: var(--border); }
 .desktop-icon[data-id="Framework"] .icon-container::before,
 .desktop-icon[data-id="Custom ERP"] .icon-container::before,
 .desktop-icon[data-id="ERPNext Settings"] .icon-container::before,
-.desktop-icon[data-id="CRM"] .icon-container::before {
+.desktop-icon[data-id="CRM"] .icon-container::before,
+.desktop-icon[data-id="Raven"] .icon-container::before {
   content: "";
   position: absolute;
   inset: 8px;
@@ -1476,6 +1479,12 @@ hr { border-color: var(--border); }
   background-size: cover !important;
   background-position: center !important;
   border-radius: 11px !important;
+}
+
+/* Raven — black brand tile with white chat-bubble icon (Raven is a chat app). */
+.desktop-icon[data-id="Raven"] {
+  --ce-tile-bg: #000000;
+  --ce-tile-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z'/></svg>");
 }
 
 /* ==========================================================================
