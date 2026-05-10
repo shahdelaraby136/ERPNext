@@ -17,7 +17,16 @@ add_to_apps_screen = [
 
 # Fixtures
 # ------------------
+# NOTE: Custom Field / Property Setter filters are intentionally NARROW.
+# We only ship the customizations we (custom_erp) authored. Do not broaden
+# to "all" — stock ERPNext / HRMS install their own Custom Fields and they
+# would conflict if re-shipped here.
+#
+# When you add a new Custom Field / Property Setter / Workspace via UI,
+# add its name (or doc_type) to the matching list below, then run
+# `scripts/export-customizations.sh` to dump it to fixtures/.
 fixtures = [
+    # Healthcare reference data
     "Medical Department",
     {"dt": "Healthcare Practitioner", "filters": [["status", "=", "Active"]]},
     {"dt": "Healthcare Service Unit Type"},
@@ -29,11 +38,28 @@ fixtures = [
     "Lab Test Template",
     "Lab Test UOM",
     "Lab Test Sample",
+
+    # Print formats owned by the Custom ERP module
     {"dt": "Print Format", "filters": [["module", "=", "Custom ERP"]]},
-    {"dt": "Workspace", "filters": [["name", "in", ["Custom ERP", "Accounting", "Invoicing", "Selling", "Buying", "Stock", "Manufacturing", "Subcontracting", "Projects", "Quality", "Assets", "Financial Reports", "HR Setup", "Healthcare", "Outpatient", "Inpatient", "Rehabilitation", "Diagnostics", "Insurance", "Setup", "CRM"]]]},
+
+    # Custom dashboard workspaces (one per hub)
+    {"dt": "Workspace", "filters": [["name", "in", [
+        "Custom ERP", "Accounting", "Invoicing", "Selling", "Buying", "Stock",
+        "Manufacturing", "Subcontracting", "Projects", "Quality", "Assets",
+        "Financial Reports", "HR Setup", "Healthcare", "Outpatient", "Inpatient",
+        "Rehabilitation", "Diagnostics", "Insurance", "Setup", "CRM",
+    ]]]},
+
+    # Property setters we authored (extend list as new ones are created)
     {"dt": "Property Setter", "filters": [["doc_type", "in", ["Patient Encounter"]]]},
-    {"dt": "Server Script", "filters": [["name", "in", ["selling_dashboard_data", "assets_dashboard_data", "buying_dashboard_data", "projects_dashboard_data", "quality_dashboard_data", "stock_dashboard_data", "subcontracting_dashboard_data", "manufacturing_dashboard_data", "financial_reports_dashboard_data", "hr_payroll_dashboard_data", "hr_leaves_dashboard_data", "hr_recruitment_dashboard_data", "hr_shift_dashboard_data", "hr_performance_dashboard_data", "hr_tax_dashboard_data", "hr_tenure_dashboard_data", "hr_expenses_dashboard_data", "hr_setup_dashboard_data", "crm_dashboard_data"]]]},
-    {"dt": "Custom Field", "filters": [["name", "in", ["Customer-customer_health_score"]]]},
+
+    # Server Scripts powering hub dashboards — LIKE pattern auto-catches future hubs
+    {"dt": "Server Script", "filters": [["name", "like", "%_dashboard_data"]]},
+
+    # Custom Fields we authored (whitelist — extend when adding new ones via UI)
+    {"dt": "Custom Field", "filters": [["name", "in", [
+        "Customer-customer_health_score",
+    ]]]},
 ]
 
 # Apps
