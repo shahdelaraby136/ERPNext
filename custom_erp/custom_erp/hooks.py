@@ -57,7 +57,7 @@ fixtures = [
 
 # include js, css files in header of desk.html
 app_include_css = [
-    "/assets/custom_erp/css/custom_theme.css?v=65",
+    "/assets/custom_erp/css/custom_theme.css?v=67",
     "/assets/custom_erp/css/design-system.css?v=2",
     "/assets/custom_erp/css/workspace.css?v=2",
     "/assets/custom_erp/css/selling_dashboard.css?v=19",
