@@ -1,0 +1,26 @@
+# Adds Raven on top of existing custom-erpnext:latest.
+# Avoids re-running bench init for already-built apps.
+FROM custom-erpnext:latest
+
+# Install build deps that raven's Python deps need (blurhash-python uses C ext).
+USER root
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+       gcc g++ build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+USER frappe
+WORKDIR /home/frappe/frappe-bench
+
+# Get raven and install Python deps.
+RUN bench get-app --branch main --resolve-deps https://github.com/The-Commit-Company/Raven \
+    && find apps/raven -path "*/.git" -prune -exec rm -rf {} + 2>/dev/null || true
+
+# Strip build tools again to keep image lean.
+USER root
+RUN apt-get purge -y gcc g++ build-essential \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
+
+USER frappe
+WORKDIR /home/frappe/frappe-bench

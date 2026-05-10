@@ -1,0 +1,42 @@
+[
+  {
+    "url": "https://github.com/frappe/erpnext",
+    "branch": "version-16"
+  },
+  {
+    "url": "https://github.com/frappe/healthcare",
+    "branch": "version-16"
+  },
+  {
+    "url": "https://github.com/frappe/hrms",
+    "branch": "version-16"
+  },
+  {
+    "url": "https://github.com/The-Commit-Company/Raven",
+    "branch": "main"
+  },
+  {
+    "url": "https://github.com/shahdelaraby136/ERPNext",
+    "branch": "main"
+  },
+  {
+    "url": "https://github.com/frappe/crm",
+    "branch": "v1.68.0"
+  },
+  {
+    "url": "https://github.com/frappe/telephony",
+    "branch": "develop"
+  },
+  {
+    "url": "https://github.com/frappe/helpdesk",
+    "branch": "main"
+  },
+  {
+    "url": "https://github.com/frappe/insights",
+    "branch": "version-3"
+  },
+  {
+    "url": "https://github.com/frappe/builder",
+    "branch": "develop"
+  }
+]
