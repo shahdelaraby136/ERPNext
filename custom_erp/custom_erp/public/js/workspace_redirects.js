@@ -44,6 +44,7 @@
 		"insurance": "/app/insurance",
 		"setup": "/app/setup",
 		"crm": "/app/crm",
+		"frappe crm": "/app/crm",
 	};
 
 	function navigateDirect(target) {

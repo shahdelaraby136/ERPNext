@@ -116,7 +116,7 @@ app_include_css = [
 app_include_js = [
     "/assets/custom_erp/js/custom_select.js?v=4",
     "/assets/custom_erp/js/selling_dashboard.js?v=9",
-    "/assets/custom_erp/js/workspace_redirects.js?v=34",
+    "/assets/custom_erp/js/workspace_redirects.js?v=35",
     "/assets/custom_erp/js/invoicing_dashboard.js?v=7",
     "/assets/custom_erp/js/accounting_hub.js?v=8",
     "/assets/custom_erp/js/assets_hub.js?v=7",
@@ -143,7 +143,7 @@ app_include_js = [
     "/assets/custom_erp/js/diagnostics_hub.js?v=2",
     "/assets/custom_erp/js/insurance_hub.js?v=1",
     "/assets/custom_erp/js/setup_hub.js?v=1",
-    "/assets/custom_erp/js/crm_hub.js?v=1",
+    "/assets/custom_erp/js/crm_hub.js?v=2",
 ]
 
 # include js, css files in header of web template

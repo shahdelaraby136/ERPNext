@@ -323,6 +323,21 @@
 			</a>`;
 	}
 
+	function applySidebarBranding() {
+		if (!isCrmPath()) return;
+		const header = document.querySelector('.body-sidebar .sidebar-header');
+		if (!header || header.dataset.ceBranded === '1') return;
+		const iconWrap = header.querySelector('.icon-container');
+		if (iconWrap) {
+			iconWrap.style.backgroundColor = '#DB4EE0';
+			iconWrap.style.padding = '4px';
+			iconWrap.innerHTML = '<img src="/assets/crm/images/logo.svg" alt="CRM" style="width:100%;height:100%;display:block;object-fit:contain;" />';
+		}
+		const subtitle = header.querySelector('.header-subtitle');
+		if (subtitle) subtitle.textContent = 'Frappe CRM';
+		header.dataset.ceBranded = '1';
+	}
+
 	function tick() {
 		const want = isCrmPath();
 		log('tick: isCrmPath =', want, 'mounted =', mounted);
@@ -333,6 +348,7 @@
 		} else if (want && mounted) {
 			ensureBodyFlag(true);
 		}
+		applySidebarBranding();
 	}
 
 	function startObserver() {
