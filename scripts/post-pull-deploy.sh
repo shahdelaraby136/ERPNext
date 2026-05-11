@@ -28,6 +28,14 @@ if ! docker ps --format '{{.Names}}' | grep -q "^${BACKEND}$"; then
     exit 1
 fi
 
+# Self-heal apps.txt drift before anything else. If bench-level apps.txt is
+# missing entries, hooks.py won't load for those apps and the migrate / build
+# below will silently produce a half-broken desk.
+bash "$REPO_ROOT/scripts/fix-apps-txt.sh" || {
+    echo "[deploy] ERROR: apps.txt preflight failed."
+    exit 1
+}
+
 # --- detect changes ---
 if git rev-parse ORIG_HEAD >/dev/null 2>&1; then
     CHANGED=$(git diff --name-only ORIG_HEAD..HEAD 2>/dev/null)
