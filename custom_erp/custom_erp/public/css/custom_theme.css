@@ -1161,9 +1161,7 @@ input[type="radio"]:disabled {
   box-shadow: var(--shadow-modal) !important;
   color: var(--text-primary) !important;
 }
-.awesomplete > ul:empty,
-.awesomplete > ul[hidden],
-.awesomplete > ul[role="listbox"]:not(:has(li:not([hidden]))) {
+.awesomplete > ul[hidden] {
   display: none !important;
   border: 0 !important;
   box-shadow: none !important;
